@@ -301,6 +301,11 @@ ol.toc a{color:var(--ink)} ol.toc a:hover{color:var(--cyan)}
 .mermaid .mindmap-node .nodeLabel, .mermaid .mindmap-node text{fill:#e7eef9; color:#e7eef9}
 @media(max-width:560px){.mermaid{font-size:12px}}
 
+/* vote form */
+.vote-q{font-weight:700; margin-bottom:12px}
+.vote-text{width:100%; margin-top:10px; background:#0a1019; border:1px solid var(--line); border-radius:10px; color:var(--ink); padding:11px 13px; font-family:var(--sans); font-size:.92rem; resize:vertical}
+.vote-text:focus{outline:none; border-color:var(--cyan)}
+
 @media(max-width:860px){
   .g2,.g3,.tools,.res-grid,.hw{grid-template-columns:1fr}
   .two-col{columns:1}
@@ -349,6 +354,7 @@ ol.toc a{color:var(--ink)} ol.toc a:hover{color:var(--cyan)}
       <a href="#game">Гра</a>
       <a href="#homework">Домашнє</a>
       <a href="#sources">Джерела</a>
+      <a href="#vote">Голос</a>
     </nav>
   </div>
 </header>
@@ -1310,6 +1316,39 @@ mindmap
   </div>
 </section>
 
+<!-- ============ VOTE ============ -->
+<section id="vote" class="no-print">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🗳️</div>
+      <div><span class="tag">Голосування · бонус</span><h2>Чи потрібна бонусна авторська лекція?</h2></div>
+    </div>
+    <div class="card glow" style="max-width:780px">
+      <p style="margin-top:0">Олексій Мацука готовий провести <b>авторську бонус-лекцію</b> — «Як вчитися та обробляти інформацію сучасними методами»: принципи навчання, робота з потоком даних і критичне мислення. <b>Якщо «за» проголосує понад 50%</b>, він запропонує ГО «Українська валькірія» додати цю лекцію до програми школи. Ваш голос вирішує 👇</p>
+      <form id="voteForm" action="https://formspree.io/f/mykqewaj" method="POST">
+        <input type="hidden" name="_subject" value="Голос за бонус-лекцію — valkyrie-cyber-school">
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+        <div class="vote-q">Чи потрібна додаткова авторська лекція «Як вчитися та обробляти інформацію сучасними методами»?</div>
+        <label class="opt"><input type="radio" name="vote" value="Так, потрібна" required> ✅ Так, дуже хочу</label>
+        <label class="opt"><input type="radio" name="vote" value="Скоріше так"> 🤔 Скоріше так</label>
+        <label class="opt"><input type="radio" name="vote" value="Ні, не зараз"> ❌ Ні, не зараз</label>
+        <label style="display:block; margin-top:16px; font-weight:600; font-size:.92rem">Ваш email <span style="color:var(--muted); font-weight:400">— для підтвердження голосу (не публікується)</span></label>
+        <input type="email" name="email" required class="vote-text" placeholder="you@example.com" autocomplete="email">
+        <textarea name="comment" rows="2" class="vote-text" placeholder="(Необов'язково) Що хотіли б почути на цій лекції?"></textarea>
+        <div style="display:flex; gap:12px; align-items:center; margin-top:14px; flex-wrap:wrap">
+          <button type="submit" class="btn btn-yellow">🗳️ Проголосувати</button>
+          <span style="color:var(--muted); font-size:.84rem">Анонімно. Один голос — один клік.</span>
+        </div>
+      </form>
+      <div id="voteThanks" class="callout ok" style="display:none; margin-top:16px">
+        <span class="ci">🎉</span>
+        <div><b>Дякуємо за ваш голос!</b> Якщо «за» набереться понад 50%, лекцію запропонують додати до програми школи «Української валькірії».</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ FOOTER ============ -->
 <footer class="no-print">
   <div class="wrap fl">
@@ -1468,6 +1507,26 @@ function gEnd(){
 }
 function gReset(){gI=0;gScore=0;gLives=3;gRender();}
 gRender();
+
+/* ---------- vote form: Formspree AJAX ---------- */
+const voteForm=document.getElementById('voteForm');
+if(voteForm){
+  voteForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn=voteForm.querySelector('button[type=submit]');
+    const old=btn.textContent; btn.disabled=true; btn.textContent='Надсилаю…';
+    try{
+      const r=await fetch(voteForm.action,{method:'POST', body:new FormData(voteForm), headers:{'Accept':'application/json'}});
+      if(r.ok){ voteForm.style.display='none'; const t=document.getElementById('voteThanks'); if(t) t.style.display='flex'; }
+      else{ btn.disabled=false; btn.textContent=old; alert('Не вдалося надіслати голос. Спробуйте ще раз.'); }
+    }catch(err){ btn.disabled=false; btn.textContent=old; alert('Помилка мережі. Спробуйте ще раз.'); }
+  });
+}
+
+/* ---------- re-scroll to hash after mind maps render (layout-shift fix) ---------- */
+window.addEventListener('load', function(){
+  if(location.hash){ try{ var el=document.querySelector(location.hash); if(el){ setTimeout(function(){ el.scrollIntoView(); }, 300); } }catch(e){} }
+});
 </script>
 <!-- Mermaid: рендер ментальних карт -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
