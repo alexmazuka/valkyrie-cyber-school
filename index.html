@@ -349,6 +349,7 @@ ol.toc a{color:var(--ink)} ol.toc a:hover{color:var(--cyan)}
       <a href="#deepfake">Deepfake</a>
       <a href="#l13">1.3 OSINT</a>
       <a href="#osint-methods">Методи</a>
+      <a href="#registries">Реєстри</a>
       <a href="#video">Відео</a>
       <a href="#checklist">Чек-лист</a>
       <a href="#game">Гра</a>
@@ -475,6 +476,7 @@ mindmap
           <li><a href="#l13">Приватність, геодані і фото (EXIF)</a></li>
           <li><a href="#osint-methods">OSINT-методи, сервіси, доксинг</a></li>
           <li><a href="#osint-methods">Перевірка номерів і скам-дзвінки</a></li>
+          <li><a href="#registries">Реєстри, геолокація, перевірка</a></li>
           <li><a href="#video">Відеорозбори українською</a></li>
           <li><a href="#checklist">Артефакт: security-checklist</a></li>
           <li><a href="#game">Гра «Інбокс під вогнем»</a></li>
@@ -879,6 +881,10 @@ mindmap
       Нік, email, телефон
       Google-дорки
       Зворотний пошук обличчя
+    Реєстри і перевірка
+      Opendatabot, YouControl
+      Clarity Project
+      Суди, борги, санкції
     Доксинг
       Хто і навіщо
       Як заробляють
@@ -1071,6 +1077,64 @@ mindmap
       <div class="card"><span class="ic">💾</span><h4>Резервні копії</h4><p style="margin:0;color:var(--muted)">Регулярний (бажано зашифрований) бекап фото й документів рятує від втрати пристрою та програм-вимагачів.</p></div>
       <div class="card"><span class="ic">🔐</span><h4>Шифрування пристрою</h4><p style="margin:0;color:var(--muted)">Увімкніть код/біометрію і шифрування. Загублений незахищений телефон = доступ до всього.</p></div>
       <div class="card"><span class="ic">🧩</span><h4>Розширення й оновлення</h4><p style="margin:0;color:var(--muted)">Видаліть зайві розширення браузера (вони бачать усе), вчасно оновлюйте застосунки — латки закривають діри.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REGISTRIES / EXTRA ============ -->
+<section id="registries">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🇺🇦</div>
+      <div><span class="tag">Лекція 1.3 · Доповнення (з курсу OSINT)</span><h2>Реєстри, геолокація та глибша перевірка</h2></div>
+    </div>
+    <p>Кілька професійних, але доступних кожному прийомів: як легально перевірити людину чи компанію через відкриті реєстри, звірити локацію з фото та зберегти доказ. Це частина того, що вивчають на повноцінних OSINT-курсах — у безпечному, оборонному ключі.</p>
+
+    <h3>🏛️ Легальні реєстри: «перевір, кому довіряєш»</h3>
+    <div class="callout warn">
+      <span class="ci">⚖️</span>
+      <div><b>Легально проти нелегального.</b> Сервіси нижче показують лише <b>офіційні відкриті дані</b> з державних реєстрів — це законно (так перевіряють контрагентів юристи, журналісти й бізнес). Це <u>не</u> «пробив»-боти, що торгують краденими базами паролів і приватними даними.</div>
+    </div>
+    <p style="color:var(--muted)">Навіщо це вам: перевірити <b>перед тим, як довіритися</b> — орендодавця, роботодавця, «благодійний фонд» чи збір, інтернет-магазин або ФОП-продавця, підрядника чи нового ділового партнера.</p>
+    <div class="tools">
+      <div class="tool"><div class="tic">🤖</div><div><div class="tname"><a href="https://opendatabot.ua/" target="_blank" rel="noopener">Opendatabot</a></div><div class="tdesc">Реєстраційні дані компаній і ФОП, судові справи, борги, моніторинг змін, перевірка на санкції/PEP. <span class="pill" style="color:var(--green)">безкоштовно + платно</span></div><div class="turl">opendatabot.ua</div></div></div>
+      <div class="tool"><div class="tic">🏢</div><div><div class="tname"><a href="https://youcontrol.com.ua/" target="_blank" rel="noopener">YouControl</a></div><div class="tdesc">Повне досьє на компанію чи ФОП: зв'язки, бенефіціари, історія. <span class="pill" style="color:var(--amber)">платно · є демо</span></div><div class="turl">youcontrol.com.ua</div></div></div>
+      <div class="tool"><div class="tic">🔎</div><div><div class="tname"><a href="https://clarity-project.info/" target="_blank" rel="noopener">Clarity Project</a></div><div class="tdesc">Перевірка контрагента за ЄДРПОУ, тендери ProZorro, 130+ реєстрів. <span class="pill" style="color:var(--green)">безкоштовно</span></div><div class="turl">clarity-project.info</div></div></div>
+      <div class="tool"><div class="tic">🧾</div><div><div class="tname"><a href="https://usr.minjust.gov.ua/ua/freesearch" target="_blank" rel="noopener">Єдиний держреєстр (Мін'юст)</a></div><div class="tdesc">Офіційна перевірка юросіб і ФОП — першоджерело. <span class="pill" style="color:var(--green)">безкоштовно</span></div><div class="turl">usr.minjust.gov.ua</div></div></div>
+      <div class="tool"><div class="tic">⚖️</div><div><div class="tname"><a href="https://reyestr.court.gov.ua/" target="_blank" rel="noopener">Реєстр судових рішень</a></div><div class="tdesc">Чи фігурує особа або компанія в судових справах. <span class="pill" style="color:var(--green)">безкоштовно</span></div><div class="turl">reyestr.court.gov.ua</div></div></div>
+      <div class="tool"><div class="tic">🚩</div><div><div class="tname">Борги, санкції, PEP</div><div class="tdesc">Виконавчі провадження (борги), санкційні списки та статус «публічної особи» зручно дивитися всередині Opendatabot чи Clarity.</div><div class="turl">через сервіси вище</div></div></div>
+    </div>
+    <div class="callout info">
+      <span class="ci">🪞</span>
+      <div><b>І про вас теж.</b> Якщо ви ФОП, маєте судові справи, борги чи нерухомість — це теж видно в цих реєстрах будь-кому. Памʼятайте про це, вирішуючи, що публікувати про себе.</div>
+    </div>
+
+    <h3 style="margin-top:26px">🛰️ Геолокація та супутник (GEOINT)</h3>
+    <p>Те, як аналітики визначають місце за фото — і як перевірити, що видають <b>ваші</b> кадри.</p>
+    <div class="tools">
+      <div class="tool"><div class="tic">🌍</div><div><div class="tname"><a href="https://earth.google.com/" target="_blank" rel="noopener">Google Earth</a></div><div class="tdesc">Супутникові знімки і 3D — звірити локацію з фоном фото.</div><div class="turl">earth.google.com</div></div></div>
+      <div class="tool"><div class="tic">🌒</div><div><div class="tname"><a href="https://www.suncalc.org/" target="_blank" rel="noopener">SunCalc</a></div><div class="tdesc">За тінню й сонцем визначають час і напрямок зйомки. Перевірте, що «розповідає» ваша тінь.</div><div class="turl">suncalc.org</div></div></div>
+      <div class="tool"><div class="tic">🛣️</div><div><div class="tname"><a href="https://www.mapillary.com/" target="_blank" rel="noopener">Mapillary / Street View</a></div><div class="tdesc">Панорами вулиць — звірити вивіски й будівлі з кадру з реальним місцем.</div><div class="turl">mapillary.com</div></div></div>
+      <div class="tool"><div class="tic">🖼️</div><div><div class="tname"><a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens / TinEye</a></div><div class="tdesc">Зворотний пошук — знайти, де ще є кадр, і впізнати місце чи обʼєкт.</div><div class="turl">lens.google · tineye.com</div></div></div>
+    </div>
+
+    <h3 style="margin-top:26px">🗄️ Вебархіви та видалена інформація</h3>
+    <div class="grid g2">
+      <div class="tool" style="align-items:flex-start"><div class="tic">🕰️</div><div><div class="tname"><a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a></div><div class="tdesc">Подивитися, як виглядала сторінка раніше (навіть видалену), і зберегти знімок.</div><div class="turl">web.archive.org</div></div></div>
+      <div class="tool" style="align-items:flex-start"><div class="tic">📌</div><div><div class="tname"><a href="https://archive.ph/" target="_blank" rel="noopener">archive.today</a></div><div class="tdesc">Зробити «знімок» шахрайського сайту чи допису — як доказ, що не зникне.</div><div class="turl">archive.ph</div></div></div>
+    </div>
+    <div class="callout ok">
+      <span class="ci">📸</span>
+      <div><b>Якщо вас доксять чи шахраюють</b> — одразу <b>зберігайте докази</b>: скріншоти, посилання, архівний знімок сторінки. Це знадобиться для скарги в платформу й заяви в кіберполіцію.</div>
+    </div>
+
+    <h3 style="margin-top:26px">🧩 Ще з арсеналу (коротко)</h3>
+    <div class="grid g2">
+      <div class="card"><span class="ic">🕵️</span><h4>Безпечний самопошук</h4><p style="margin:0;color:var(--muted)">Гугліть себе в режимі <b>інкогніто</b> й без входу в акаунти — щоб не лишати слідів. Для перевірок створюють окремий «чистий» акаунт (sock puppet), а не використовують особистий.</p></div>
+      <div class="card"><span class="ic">🔐</span><h4>Шифрування файлів</h4><p style="margin:0;color:var(--muted)"><a href="https://www.veracrypt.fr/" target="_blank" rel="noopener">VeraCrypt</a> — зашифрований контейнер для чутливих документів, скрінів і доказів. Без пароля їх не відкрити.</p></div>
+      <div class="card"><span class="ic">📷</span><h4>Розумні пристрої й камери</h4><p style="margin:0;color:var(--muted)">Сервіси на кшталт <a href="https://www.shodan.io/" target="_blank" rel="noopener">Shodan</a> показують незахищені вебкамери й роутери в інтернеті. Змініть дефолтні паролі камер і роутера вдома.</p></div>
+      <div class="card"><span class="ic">🤖</span><h4>ШІ — двосічна зброя</h4><p style="margin:0;color:var(--muted)">Нейромережі допомагають шахраям (діпфейки, переконливі тексти), але й вам — для перевірки фактів, перекладу й виявлення підробок. Довіряй, але перевіряй.</p></div>
     </div>
   </div>
 </section>
