@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кібербезпека для своїх · Лекція 1.2 + 1.3 — ГО «Українська валькірія»</title>
+<meta name="description" content="Інтерактивна лекція: розпізнавання фішингу, deepfake, шкідливих посилань та OSINT-гігієна. Інструменти, тести, гра-симулятор і особистий security-checklist. ГО «Українська валькірія».">
+<meta name="theme-color" content="#0a0e16">
+<meta property="og:title" content="Кібербезпека для своїх — Лекція 1.2 + 1.3">
+<meta property="og:description" content="Фішинг, deepfake, OSINT-гігієна. Інструменти, тести, гра та особистий security-checklist. Школа ГО «Українська валькірія».">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e16; --bg2:#0c1320; --card:#111a29; --card2:#0f1825;
+  --line:#1e2c42; --line2:#27395a;
+  --ink:#e7eef9; --muted:#93a4c0; --dim:#64748f;
+  --blue:#4d8bff; --blue-soft:#1b2c4d; --yellow:#ffd60a; --cyan:#39e3ff;
+  --green:#2ed573; --green-soft:#10331f; --red:#ff4d61; --red-soft:#3a141b;
+  --amber:#ffb020; --amber-soft:#3a2a08; --violet:#9b7bff;
+  --radius:16px; --radius-sm:10px;
+  --shadow:0 10px 40px rgba(0,0,0,.45);
+  --glow-blue:0 0 0 1px rgba(77,139,255,.35),0 0 28px rgba(77,139,255,.18);
+  --glow-cyan:0 0 0 1px rgba(57,227,255,.35),0 0 26px rgba(57,227,255,.16);
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:84px}
+body{
+  margin:0; font-family:var(--sans); color:var(--ink); line-height:1.62;
+  background:
+    radial-gradient(1100px 600px at 82% -8%, rgba(77,139,255,.10), transparent 60%),
+    radial-gradient(900px 520px at 8% 4%, rgba(57,227,255,.07), transparent 55%),
+    radial-gradient(700px 600px at 50% 120%, rgba(255,214,10,.05), transparent 60%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--cyan); text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.2; margin:0 0 .5em}
+h2{font-size:clamp(1.5rem,3.4vw,2.15rem); font-weight:800; letter-spacing:-.02em}
+h3{font-size:1.22rem; font-weight:700}
+h4{font-size:1.02rem; font-weight:700}
+p{margin:0 0 1rem}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px}
+.mono{font-family:var(--mono)}
+.tag{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan)}
+
+/* progress bar */
+#progress{position:fixed; top:0; left:0; height:3px; width:0; z-index:120;
+  background:linear-gradient(90deg,var(--cyan),var(--blue),var(--yellow)); box-shadow:0 0 12px rgba(57,227,255,.6)}
+
+/* nav */
+header.nav{position:sticky; top:0; z-index:100; backdrop-filter:blur(12px);
+  background:rgba(10,14,22,.82); border-bottom:1px solid var(--line)}
+.nav-in{display:flex; align-items:center; gap:16px; height:62px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.01em; white-space:nowrap}
+.brand .mark{width:30px; height:30px; flex:0 0 auto; display:grid; place-items:center;
+  border-radius:9px; background:linear-gradient(135deg,var(--blue),#1b48a8);
+  box-shadow:var(--glow-blue); font-size:16px}
+.brand small{display:block; font-weight:500; color:var(--muted); font-size:.68rem; letter-spacing:.04em}
+.nav-links{margin-left:auto; display:flex; gap:4px; flex-wrap:wrap}
+.nav-links a{color:var(--muted); font-size:.86rem; font-weight:600; padding:7px 11px; border-radius:9px}
+.nav-links a:hover{color:var(--ink); background:var(--card); text-decoration:none}
+.nav-links a.active{color:var(--cyan); background:var(--blue-soft)}
+.nav-toggle{display:none}
+
+/* hero */
+.hero{padding:54px 0 30px; position:relative; overflow:hidden}
+.hero .kit{display:inline-flex; gap:8px; align-items:center; padding:6px 12px; border-radius:999px;
+  border:1px solid var(--line2); background:var(--card); font-family:var(--mono); font-size:.74rem; color:var(--cyan); margin-bottom:18px}
+.hero .kit .dot{width:8px;height:8px;border-radius:50%;background:var(--green); box-shadow:0 0 10px var(--green)}
+.hero h1{font-size:clamp(2rem,5.4vw,3.35rem); font-weight:800; letter-spacing:-.03em; margin:0 0 .35em;
+  background:linear-gradient(120deg,#fff 20%,var(--cyan) 60%,var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero .lede{font-size:1.12rem; color:var(--muted); max-width:62ch}
+.meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px}
+.chip{display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:11px;
+  border:1px solid var(--line2); background:var(--card); font-size:.86rem; font-weight:600}
+.chip b{color:var(--yellow); font-weight:700}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:26px}
+.btn{display:inline-flex; align-items:center; gap:9px; padding:12px 20px; border-radius:12px; font-weight:700;
+  font-size:.95rem; cursor:pointer; border:1px solid transparent; transition:.16s transform,.16s box-shadow; font-family:var(--sans)}
+.btn:hover{text-decoration:none; transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#2256c9); color:#fff; box-shadow:var(--glow-blue)}
+.btn-ghost{background:var(--card); color:var(--ink); border-color:var(--line2)}
+.btn-yellow{background:linear-gradient(135deg,var(--yellow),#e6a700); color:#1a1400; box-shadow:0 0 24px rgba(255,214,10,.22)}
+
+/* section shell */
+section{padding:46px 0; border-top:1px solid var(--line)}
+.sec-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:26px}
+.sec-num{flex:0 0 auto; width:54px; height:54px; border-radius:14px; display:grid; place-items:center;
+  font-family:var(--mono); font-weight:700; font-size:1.05rem; color:var(--cyan);
+  border:1px solid var(--line2); background:var(--card); box-shadow:var(--glow-cyan)}
+.sec-head .tag{margin-bottom:6px; display:block}
+
+/* cards / grid */
+.grid{display:grid; gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:linear-gradient(180deg,var(--card),var(--card2)); border:1px solid var(--line);
+  border-radius:var(--radius); padding:20px 22px}
+.card.glow{box-shadow:var(--shadow)}
+.card h4{margin-top:0}
+.card .ic{font-size:1.5rem; margin-bottom:6px; display:block}
+
+/* callouts */
+.callout{border-radius:var(--radius-sm); padding:15px 18px; margin:18px 0; border:1px solid var(--line2);
+  background:var(--card); display:flex; gap:13px; align-items:flex-start}
+.callout .ci{font-size:1.3rem; line-height:1; flex:0 0 auto; margin-top:1px}
+.callout.danger{border-color:rgba(255,77,97,.4); background:linear-gradient(180deg,var(--red-soft),transparent)}
+.callout.warn{border-color:rgba(255,176,32,.4); background:linear-gradient(180deg,var(--amber-soft),transparent)}
+.callout.ok{border-color:rgba(46,213,115,.4); background:linear-gradient(180deg,var(--green-soft),transparent)}
+.callout.info{border-color:rgba(77,139,255,.4); background:linear-gradient(180deg,var(--blue-soft),transparent)}
+.callout b{color:var(--ink)}
+
+/* lists */
+ul.clean{list-style:none; padding:0; margin:0}
+ul.clean li{padding:8px 0 8px 30px; position:relative; border-bottom:1px dashed var(--line)}
+ul.clean li:last-child{border-bottom:0}
+ul.clean li::before{content:"›"; position:absolute; left:8px; top:7px; color:var(--cyan); font-weight:700}
+ul.flag li::before{content:"⚑"; color:var(--red); left:6px; font-size:.9rem}
+ul.check li::before{content:"✓"; color:var(--green)}
+
+/* signal scale */
+.signal{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0}
+.sig{flex:1; min-width:150px; border-radius:12px; padding:12px 14px; border:1px solid var(--line2); background:var(--card)}
+.sig .lvl{font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+.sig.red{border-color:rgba(255,77,97,.45)} .sig.red .lvl{color:var(--red)}
+.sig.amber{border-color:rgba(255,176,32,.45)} .sig.amber .lvl{color:var(--amber)}
+.sig.green{border-color:rgba(46,213,115,.45)} .sig.green .lvl{color:var(--green)}
+
+/* tool table / cards */
+.tools{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:8px}
+.tool{display:flex; gap:12px; align-items:flex-start; padding:14px 15px; border-radius:12px;
+  border:1px solid var(--line); background:var(--card); transition:.15s}
+.tool:hover{border-color:var(--line2); transform:translateY(-1px)}
+.tool .tic{width:38px; height:38px; flex:0 0 auto; border-radius:10px; display:grid; place-items:center;
+  background:var(--blue-soft); font-size:18px}
+.tool .tname{font-weight:700; font-size:.96rem}
+.tool .tname a{color:var(--ink)}
+.tool .tdesc{font-size:.82rem; color:var(--muted); margin-top:2px}
+.tool .turl{font-family:var(--mono); font-size:.74rem; color:var(--cyan); margin-top:4px; word-break:break-all}
+
+/* agenda timeline */
+.timeline{position:relative; margin-top:8px}
+.tl{display:grid; grid-template-columns:90px 1fr; gap:16px; padding:11px 0; border-bottom:1px solid var(--line)}
+.tl:last-child{border-bottom:0}
+.tl .t{font-family:var(--mono); font-weight:700; color:var(--yellow); font-size:.86rem; padding-top:2px}
+.tl .d b{display:block}
+.tl .d span{color:var(--muted); font-size:.9rem}
+.tl.brk .t{color:var(--dim)}
+
+/* interactive example cards */
+.ex{border:1px solid var(--line2); border-radius:var(--radius); overflow:hidden; margin:16px 0; background:var(--card)}
+.ex-head{display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line);
+  background:var(--card2); font-family:var(--mono); font-size:.82rem; color:var(--muted)}
+.ex-head .src{margin-left:auto; color:var(--dim)}
+.ex-body{padding:16px 18px}
+.msg{font-family:var(--mono); font-size:.9rem; background:#0a1019; border:1px solid var(--line); border-radius:10px;
+  padding:14px 16px; white-space:pre-wrap; line-height:1.55; color:#cdd9ec}
+.msg .lnk{color:var(--red)}
+.ex-actions{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+.guess{padding:9px 16px; border-radius:10px; font-weight:700; cursor:pointer; border:1px solid var(--line2); background:var(--card); color:var(--ink); font-size:.9rem; font-family:var(--sans)}
+.guess.ph:hover{border-color:var(--red); color:var(--red)}
+.guess.sf:hover{border-color:var(--green); color:var(--green)}
+.verdict{margin-top:14px; padding:14px 16px; border-radius:11px; display:none; border:1px solid var(--line2)}
+.verdict.show{display:block; animation:pop .25s ease}
+.verdict.ph{border-color:rgba(255,77,97,.45); background:var(--red-soft)}
+.verdict.sf{border-color:rgba(46,213,115,.45); background:var(--green-soft)}
+.verdict .vh{font-weight:800; display:flex; align-items:center; gap:8px; margin-bottom:6px}
+@keyframes pop{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+
+/* quiz */
+.quiz{border:1px solid var(--line2); border-radius:var(--radius); padding:18px 20px; margin:16px 0;
+  background:linear-gradient(180deg,var(--card),var(--card2))}
+.quiz .q{font-weight:700; margin-bottom:12px}
+.opt{display:block; padding:11px 14px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; cursor:pointer; transition:.13s}
+.opt:hover{border-color:var(--line2); background:var(--card)}
+.opt.correct{border-color:var(--green); background:var(--green-soft)}
+.opt.wrong{border-color:var(--red); background:var(--red-soft)}
+.opt input{margin-right:10px; accent-color:var(--cyan)}
+.qfb{margin-top:8px; font-size:.9rem; color:var(--muted); display:none}
+.qfb.show{display:block}
+
+/* checklist */
+.cl-wrap{border:1px solid var(--line2); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow)}
+.cl-top{padding:18px 22px; background:linear-gradient(135deg,#10213f,#0c1626); border-bottom:1px solid var(--line)}
+.cl-top h3{margin:0 0 4px}
+.cl-progress{height:12px; border-radius:999px; background:#0a1019; border:1px solid var(--line); overflow:hidden; margin-top:12px}
+.cl-progress > i{display:block; height:100%; width:0; border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--cyan)); transition:width .4s ease}
+.cl-stat{display:flex; justify-content:space-between; align-items:center; margin-top:9px; font-size:.86rem; color:var(--muted)}
+.cl-stat b{color:var(--ink)}
+.cl-group{padding:6px 22px 4px}
+.cl-group > .gh{display:flex; align-items:center; gap:10px; padding:14px 0 8px; font-weight:700; border-bottom:1px solid var(--line)}
+.cl-group > .gh .gi{width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:var(--blue-soft); font-size:15px}
+.cl-item{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px dashed var(--line)}
+.cl-item:last-child{border-bottom:0}
+.cl-item input{margin-top:3px; width:19px; height:19px; flex:0 0 auto; accent-color:var(--green); cursor:pointer}
+.cl-item label{cursor:pointer; flex:1}
+.cl-item .ci-t{font-weight:600}
+.cl-item .ci-d{font-size:.84rem; color:var(--muted); margin-top:2px}
+.cl-item .ci-d a{font-size:.84rem}
+.cl-item.done .ci-t{text-decoration:line-through; color:var(--dim)}
+.cl-actions{display:flex; gap:10px; flex-wrap:wrap; padding:18px 22px; background:var(--card2); border-top:1px solid var(--line)}
+
+/* game */
+.game{border:1px solid var(--line2); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); background:var(--card)}
+.game-top{padding:14px 20px; background:linear-gradient(135deg,#12233f,#0c1626); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+.game-top .gt{font-weight:800; display:flex; align-items:center; gap:8px}
+.game-stats{margin-left:auto; display:flex; gap:16px; font-family:var(--mono); font-size:.86rem}
+.game-stats b{color:var(--yellow)}
+.game-stage{padding:22px}
+.game .scene{min-height:120px}
+.game .inbox{font-family:var(--mono); font-size:.92rem; background:#0a1019; border:1px solid var(--line); border-radius:12px; padding:16px 18px; line-height:1.55}
+.inbox .from{color:var(--muted)} .inbox .from b{color:var(--ink)}
+.inbox .subj{color:#fff; font-weight:700; margin:6px 0 10px}
+.inbox .lnk{color:var(--cyan)}
+.game-controls{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+.game-fb{margin-top:16px; padding:14px 16px; border-radius:11px; display:none}
+.game-fb.show{display:block; animation:pop .25s}
+.game-fb.good{border:1px solid rgba(46,213,115,.45); background:var(--green-soft)}
+.game-fb.bad{border:1px solid rgba(255,77,97,.45); background:var(--red-soft)}
+.game-fb .next{margin-top:10px}
+.bar{height:8px; background:#0a1019; border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-top:4px; width:100%}
+.bar > i{display:block; height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); width:0; transition:.3s}
+.result{text-align:center; padding:14px 0}
+.result .score{font-size:3rem; font-weight:800; font-family:var(--mono);
+  background:linear-gradient(120deg,var(--cyan),var(--yellow)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.badge{display:inline-block; padding:6px 14px; border-radius:999px; font-weight:700; font-size:.9rem; margin-top:6px}
+
+/* resources */
+.res-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.res{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--card)}
+.res h4{margin:0 0 10px; display:flex; align-items:center; gap:8px}
+.res ul{margin:0; padding:0; list-style:none}
+.res li{padding:6px 0; border-bottom:1px dashed var(--line); font-size:.9rem}
+.res li:last-child{border-bottom:0}
+.res li .d{color:var(--dim); font-size:.82rem}
+
+/* homework */
+.hw{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+.hw .card{border-left:3px solid var(--yellow)}
+.hw .due{font-family:var(--mono); font-size:.76rem; color:var(--yellow); text-transform:uppercase; letter-spacing:.08em}
+
+/* footer */
+footer{border-top:1px solid var(--line); padding:34px 0 60px; color:var(--muted); font-size:.9rem}
+footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+.kbd{font-family:var(--mono); font-size:.78rem; background:var(--card); border:1px solid var(--line2); border-bottom-width:2px; border-radius:6px; padding:1px 7px}
+
+/* misc */
+.divider-note{font-size:.82rem; color:var(--dim); text-align:center; margin:8px 0 0; font-family:var(--mono)}
+.pill{display:inline-block; font-family:var(--mono); font-size:.72rem; padding:2px 9px; border-radius:999px; border:1px solid var(--line2); color:var(--muted); margin-left:6px}
+.two-col{columns:2; column-gap:28px}
+.anchor{position:relative; top:-72px; visibility:hidden}
+
+@media(max-width:860px){
+  .g2,.g3,.tools,.res-grid,.hw{grid-template-columns:1fr}
+  .two-col{columns:1}
+  .nav-links{display:none; position:absolute; top:62px; left:0; right:0; flex-direction:column; gap:0;
+    background:var(--bg2); border-bottom:1px solid var(--line); padding:8px}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:11px 14px}
+  .nav-toggle{display:inline-grid; place-items:center; margin-left:auto; width:40px; height:40px; border-radius:10px;
+    border:1px solid var(--line2); background:var(--card); color:var(--ink); cursor:pointer; font-size:18px}
+  .tl{grid-template-columns:70px 1fr}
+}
+
+/* print: only the checklist (the artefact) */
+@media print{
+  body{background:#fff; color:#000}
+  #progress,header.nav,.hero,.nav-toggle,.no-print,section:not(#checklist),footer{display:none !important}
+  #checklist{border-top:0; padding:0}
+  .cl-wrap{box-shadow:none; border:1px solid #999}
+  .cl-top{background:#eee; color:#000} .cl-top h3,.cl-stat b{color:#000}
+  .cl-item .ci-d{color:#333} a{color:#000; text-decoration:underline}
+  .cl-actions{display:none}
+  .cl-group>.gh .gi{background:#ddd}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <div class="brand">
+      <span class="mark">🛡️</span>
+      <span>Кібербезпека для своїх<small>Школа ГО «Українська валькірія»</small></span>
+    </div>
+    <button class="nav-toggle" aria-label="Меню" onclick="document.getElementById('navlinks').classList.toggle('open')">☰</button>
+    <nav class="nav-links" id="navlinks">
+      <a href="#agenda">Програма</a>
+      <a href="#l12">1.2 Фішинг</a>
+      <a href="#deepfake">Deepfake</a>
+      <a href="#vpo">Схеми ВПО</a>
+      <a href="#practice">Практика</a>
+      <a href="#l13">1.3 OSINT</a>
+      <a href="#checklist">Чек-лист</a>
+      <a href="#game">Гра</a>
+      <a href="#homework">Домашнє</a>
+      <a href="#sources">Джерела</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="wrap">
+    <span class="kit"><span class="dot"></span> LIVE · 90 хвилин · Модуль 1</span>
+    <h1>Розпізнавання фішингу, deepfake та OSINT-гігієна</h1>
+    <p class="lede">Інтерактивне заняття для учасниць школи ГО «Українська валькірія». Навчимося бачити шахрайство до того, як воно спрацює, перевіряти посилання й акаунти, і прибирати свій цифровий слід. У кінці — гра-симулятор та особистий security-checklist, який ви забираєте з собою.</p>
+    <div class="meta-row">
+      <span class="chip">📅 <b>Чт, 25.06.2026</b></span>
+      <span class="chip">⏱️ <b>90 хв</b></span>
+      <span class="chip">🎓 Лекції <b>1.2 + 1.3</b></span>
+      <span class="chip">📦 Артефакт: <b>security-checklist</b></span>
+    </div>
+    <div class="hero-cta">
+      <a href="#agenda" class="btn btn-primary">▶ Почати заняття</a>
+      <a href="#checklist" class="btn btn-yellow">📋 Особистий чек-лист</a>
+      <a href="#game" class="btn btn-ghost">🎮 Гра-симулятор</a>
+    </div>
+    <p class="divider-note">Прокручуйте зверху вниз — або користуйтеся меню. Прогрес чек-листа й гри зберігається у вашому браузері.</p>
+  </div>
+</div>
+
+<!-- ============ AGENDA ============ -->
+<section id="agenda">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">⏱</div>
+      <div><span class="tag">Тайм-план</span><h2>Програма на 90 хвилин</h2>
+      <p style="color:var(--muted);margin:0">Заняття поєднує дві лекції модуля та практику. Орієнтовний таймінг — кураторка може гнучко зміщувати блоки.</p></div>
+    </div>
+    <div class="card glow">
+      <div class="timeline">
+        <div class="tl"><div class="t">00:00</div><div class="d"><b>Вступ і правила гри</b><span>Мета заняття, формат, домовленість про «дурних запитань не буває».</span></div></div>
+        <div class="tl"><div class="t">00:05</div><div class="d"><b>Розминка-опитування</b><span>«Хто з вас отримував “виплату від ООН” у Telegram?» — швидкий зріз досвіду групи.</span></div></div>
+        <div class="tl"><div class="t">00:08</div><div class="d"><b>Що таке фішинг + ознаки</b><span>Терміновість, «виграш», прохання даних. Психологія тиску. <span class="pill">1.2</span></span></div></div>
+        <div class="tl"><div class="t">00:18</div><div class="d"><b>Перевірка посилань</b><span>Реальна адреса, скорочені лінки, підроблені домени + інструменти. <span class="pill">1.2</span></span></div></div>
+        <div class="tl"><div class="t">00:28</div><div class="d"><b>Deepfake і фейкові акаунти</b><span>Як виглядають, чому небезпечні, базова перевірка. <span class="pill">1.2</span></span></div></div>
+        <div class="tl"><div class="t">00:36</div><div class="d"><b>Схеми проти переселенців</b><span>Реальні приклади шахрайства з «допомогою ВПО». <span class="pill">1.2</span></span></div></div>
+        <div class="tl"><div class="t">00:43</div><div class="d"><b>Практика: «фішинг чи ні»</b><span>Розбір 3–4 реальних повідомлень разом. <span class="pill">1.2</span></span></div></div>
+        <div class="tl brk"><div class="t">00:50</div><div class="d"><b>↺ Мікро-пауза (2 хв)</b><span>Розім'ятися, питання.</span></div></div>
+        <div class="tl"><div class="t">00:52</div><div class="d"><b>Що про вас видно публічно</b><span>Пошук свого імені, фото, телефону. <span class="pill">1.3</span></span></div></div>
+        <div class="tl"><div class="t">01:00</div><div class="d"><b>Приватність у соцмережах</b><span>Хто бачить пости, геолокацію, список друзів. <span class="pill">1.3</span></span></div></div>
+        <div class="tl"><div class="t">01:07</div><div class="d"><b>Геодані і фото</b><span>Метадані (EXIF), фон на фото — особливо важливо для ВПО. <span class="pill">1.3</span></span></div></div>
+        <div class="tl"><div class="t">01:14</div><div class="d"><b>Артефакт: security-checklist</b><span>Кожна заповнює та фіналізує особистий чек-лист. <span class="pill">1.3</span></span></div></div>
+        <div class="tl"><div class="t">01:22</div><div class="d"><b>🎮 Гра «Інбокс під вогнем»</b><span>Симулятор: «фішинг чи безпечно» на швидкість.</span></div></div>
+        <div class="tl"><div class="t">01:28</div><div class="d"><b>Домашнє завдання + підсумок</b><span>Що зробити до наступної зустрічі.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.2 PHISHING ============ -->
+<section id="l12">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">1.2</div>
+      <div><span class="tag">Лекція 1.2 · Блок 1</span><h2>Що таке фішинг і як його впізнати</h2></div>
+    </div>
+
+    <p><b>Фішинг</b> (від англ. <i>fishing</i> — рибалка) — це коли шахрай вдає з себе когось, кому ви довіряєте (банк, «Дія», Нова пошта, ООН, начальниця, подруга), щоб ви <b>самі</b> віддали йому пароль, код з SMS, дані картки або гроші. Він не зламує техніку — він зламує вашу довіру й емоції.</p>
+
+    <div class="callout info">
+      <span class="ci">🧠</span>
+      <div><b>Головне правило заняття.</b> Фішинг майже завжди тисне на одну з трьох кнопок: <b>страх</b> («картку заблоковано!»), <b>жадібність</b> («ви виграли / вам нараховано виплату») або <b>співчуття/обов'язок</b> («допоможи терміново», «начальниця просить»). Якщо лист викликає сильну емоцію і квапить — це вже привід зупинитися.</div>
+    </div>
+
+    <h3>🚩 Типові ознаки шахрайського листа чи повідомлення</h3>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card">
+        <span class="ic">⏰</span><h4>Терміновість і тиск</h4>
+        <p style="margin:0;color:var(--muted)">«Лише сьогодні», «акаунт видалять через 24 год», «терміново підтвердіть». Мета — щоб ви діяли, не подумавши.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🎁</span><h4>«Виграш» / «виплата»</h4>
+        <p style="margin:0;color:var(--muted)">Несподівані гроші, компенсація, приз, «допомога всім українцям». Те, чого ви не оформлювали, — не приходить саме.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🔑</span><h4>Прохання даних</h4>
+        <p style="margin:0;color:var(--muted)">Просять пароль, CVV, ПІН, код з SMS, повний номер картки. <b>Жоден</b> банк чи держустанова цього не питає у листі чи чаті.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🔗</span><h4>Підозріле посилання / вкладення</h4>
+        <p style="margin:0;color:var(--muted)">Дивний домен, скорочений лінк, «рахунок.pdf.exe», кнопка «Підтвердити» з адресою, що не збігається з текстом.</p>
+      </div>
+      <div class="card">
+        <span class="ic">✍️</span><h4>Помилки і «не той» тон</h4>
+        <p style="margin:0;color:var(--muted)">Кострубата мова, машинний переклад, звертання «Шановний клієнт» без імені. Хоча AI у 2025–2026 уже пише грамотно — тож відсутність помилок ≠ безпека.</p>
+      </div>
+      <div class="card">
+        <span class="ic">📨</span><h4>Несподіваний канал / відправник</h4>
+        <p style="margin:0;color:var(--muted)">«Банк» пише у Telegram, «Нова пошта» — з Gmail, домен схожий, але не той (privat<b>24</b>.com.ua проти підробки).</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="ci">🤖</span>
+      <div><b>Що змінилось у 2025–2026.</b> Завдяки ШІ фішинг подорослішав: листи стали грамотними й персональними, а <b>голосовий фішинг (vishing) зріс на 442%</b> за рік. Шахраї клонують голос близької людини всього з <b>3 секунд</b> аудіо. Тому старий маркер «безграмотний лист» більше не працює — спираємось на <b>поведінку</b> (тиск, прохання даних, дивний канал), а не лише на орфографію.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LINKS CHECK ============ -->
+<section id="links">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🔗</div>
+      <div><span class="tag">Лекція 1.2 · Блок 2</span><h2>Перевірка посилань: побачити реальну адресу</h2></div>
+    </div>
+
+    <p>Текст посилання і його справжня адреса — різні речі. Кнопка може казати «privatbank.ua», а вести на сайт шахрая. Навчимось бачити, <b>куди насправді</b> веде лінк.</p>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>👀 Як подивитися справжню адресу</h4>
+        <ul class="clean">
+          <li><b>На комп'ютері:</b> наведіть курсор на посилання (не клікаючи) — внизу браузера з'явиться реальна адреса.</li>
+          <li><b>На телефоні:</b> натисніть і <b>утримуйте</b> палець на посиланні — випливе меню з повним URL. Прочитайте його перед переходом.</li>
+          <li>Читайте домен <b>справа наліво</b> до першого «/». Головне — що стоїть перед <span class="mono">.ua/.com</span>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🎭 Підроблені домени — на що дивитися</h4>
+        <ul class="clean flag">
+          <li><b>Зайві слова:</b> <span class="mono">privat24-online.com</span>, <span class="mono">diia-gov.help</span> — справжній лише <span class="mono">privat24.ua</span>, <span class="mono">diia.gov.ua</span>.</li>
+          <li><b>Підміна літер:</b> <span class="mono">rоzetka</span> з російською «о», <span class="mono">paypa1.com</span> (одиниця замість «l»).</li>
+          <li><b>Чужа зона:</b> <span class="mono">.top .xyz .help .online .ru</span> від імені банку — майже завжди підробка.</li>
+          <li><b>Піддомен-обманка:</b> <span class="mono">privatbank.secure-login.top</span> — справжній сайт тут <span class="mono">secure-login.top</span>, а не банк.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout danger" style="margin-top:18px">
+      <span class="ci">✂️</span>
+      <div><b>Скорочені посилання (bit.ly, cutt.ly, is.gd, t.co).</b> Вони ховають реальну адресу. Ніколи не переходьте «наосліп». Спершу <b>розгорніть</b> лінк безпечним сервісом (нижче) — він покаже, куди той веде, без переходу.</div>
+    </div>
+
+    <h3>🧰 Інструменти для перевірки посилань і файлів</h3>
+    <div class="tools">
+      <div class="tool"><div class="tic">🧪</div><div><div class="tname"><a href="https://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a></div><div class="tdesc">Вставте посилання або завантажте файл — перевірить 70+ антивірусів одночасно.</div><div class="turl">virustotal.com</div></div></div>
+      <div class="tool"><div class="tic">🔬</div><div><div class="tname"><a href="https://urlscan.io/" target="_blank" rel="noopener">urlscan.io</a></div><div class="tdesc">Відкриває сайт у «пісочниці» й показує скрін та реальний домен — вам не треба туди заходити.</div><div class="turl">urlscan.io</div></div></div>
+      <div class="tool"><div class="tic">✂️</div><div><div class="tname"><a href="https://checkshorturl.com/" target="_blank" rel="noopener">CheckShortURL</a></div><div class="tdesc">Розгортає скорочені лінки (bit.ly тощо) і показує кінцеву адресу.</div><div class="turl">checkshorturl.com</div></div></div>
+      <div class="tool"><div class="tic">🔓</div><div><div class="tname"><a href="https://unshorten.it/" target="_blank" rel="noopener">Unshorten.It</a></div><div class="tdesc">Альтернатива для розгортання коротких посилань + перевірка репутації.</div><div class="turl">unshorten.it</div></div></div>
+      <div class="tool"><div class="tic">🛡️</div><div><div class="tname"><a href="https://transparencyreport.google.com/safe-browsing/search" target="_blank" rel="noopener">Google Safe Browsing</a></div><div class="tdesc">Перевірка, чи позначений сайт Google як небезпечний/фішинговий.</div><div class="turl">transparencyreport.google.com/safe-browsing</div></div></div>
+      <div class="tool"><div class="tic">🌐</div><div><div class="tname"><a href="https://who.is/" target="_blank" rel="noopener">Who.is</a></div><div class="tdesc">Коли зареєстровано домен. Сайт «банку», створений 3 дні тому, — червоний прапор.</div><div class="turl">who.is</div></div></div>
+    </div>
+
+    <div class="quiz" data-quiz="links">
+      <div class="q">🧩 Міні-тест. Який із доменів справді належить Приватбанку?</div>
+      <label class="opt" data-correct="1"><input type="radio" name="q-links"> privat24.ua</label>
+      <label class="opt"><input type="radio" name="q-links"> privat24-ua.com</label>
+      <label class="opt"><input type="radio" name="q-links"> privat24.secure-pay.top</label>
+      <label class="opt"><input type="radio" name="q-links"> приват24.online</label>
+      <div class="qfb">✅ Саме так — <b>privat24.ua</b>. Решта мають зайві слова, чужу зону або підмінений піддомен. Завжди дивіться на головний домен перед першим «/».</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEEPFAKE ============ -->
+<section id="deepfake">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🎭</div>
+      <div><span class="tag">Лекція 1.2 · Блок 3</span><h2>Deepfake і фейкові акаунти</h2></div>
+    </div>
+
+    <p><b>Deepfake</b> — згенероване ШІ відео, фото чи голос, де реальна людина «каже» або «робить» те, чого не було. У 2025-му сервіси deepfake стали масовими й дешевими, тому фейкові відео «знайомого», «військового командира» чи «знаменитості, що рекламує інвестиції» — буденність.</p>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>👁️ На що дивитися у відео/фото</h4>
+        <ul class="clean flag">
+          <li><b>Очі й моргання:</b> неприродний погляд, рідке або «застигле» моргання, асиметрія.</li>
+          <li><b>Шкіра й волосся:</b> надто гладка або «воскова» шкіра, межі обличчя, що «пливуть», розмиття біля волосся та вух.</li>
+          <li><b>Світло й тіні:</b> тіні та відблиски в очах не збігаються з оточенням.</li>
+          <li><b>Губи й звук:</b> артикуляція не співпадає зі словами; «механічна» інтонація голосу.</li>
+          <li><b>Руки, вуха, прикраси, зуби:</b> ШІ часто плутається саме в дрібних деталях.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🕵️ Як виглядає фейковий акаунт</h4>
+        <ul class="clean flag">
+          <li>Створений нещодавно, мало дописів, фото — «занадто ідеальні» (стокові).</li>
+          <li>Багато підписників, але <b>немає живих коментарів</b> та реальної історії.</li>
+          <li>Відмовляється від відеодзвінка, швидко переводить розмову в інший месенджер.</li>
+          <li>Надто швидко зближується («сильні почуття»), згодом просить гроші/допомогу.</li>
+          <li>Єдиний спосіб оплати — на особисту картку; «нереальні» ціни товару.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <span class="ci">💔</span>
+      <div><b>Романтичне шахрайство (catfishing) і фейкові «командири».</b> Кіберполіція попереджає: схеми місяцями тиснуть на емоції та довіру, особливо проти військових, їхніх рідних та самотніх людей. Класична ознака — людина <b>уникає відеозв'язку</b> й рано чи пізно просить переказати гроші. Перевіряйте фото зворотним пошуком.</div>
+    </div>
+
+    <h3>🧰 Базова перевірка особи, фото й відео</h3>
+    <div class="tools">
+      <div class="tool"><div class="tic">🖼️</div><div><div class="tname"><a href="https://images.google.com/" target="_blank" rel="noopener">Google Зображення / Lens</a></div><div class="tdesc">Зворотний пошук фото: чи це справжня людина, чи вкрадене стокове/чуже фото.</div><div class="turl">images.google.com · lens.google</div></div></div>
+      <div class="tool"><div class="tic">🔎</div><div><div class="tname"><a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a></div><div class="tdesc">Ще один зворотний пошук зображень — показує, де фото з'являлося раніше.</div><div class="turl">tineye.com</div></div></div>
+      <div class="tool"><div class="tic">🎥</div><div><div class="tname"><a href="https://www.weverify.eu/verification-plugin/" target="_blank" rel="noopener">InVID &amp; WeVerify</a></div><div class="tdesc">Плагін для перевірки відео: розбиває на кадри, шукає першоджерело, аналізує метадані.</div><div class="turl">weverify.eu</div></div></div>
+      <div class="tool"><div class="tic">🧠</div><div><div class="tname"><a href="https://zinc.cse.buffalo.edu/ubmdfl/deep-o-meter/" target="_blank" rel="noopener">DeepFake-o-Meter</a></div><div class="tdesc">Академічний інструмент: завантажте фото/відео/аудіо — оцінить імовірність підробки.</div><div class="turl">zinc.cse.buffalo.edu/.../deep-o-meter</div></div></div>
+      <div class="tool"><div class="tic">🧾</div><div><div class="tname"><a href="https://fotoforensics.com/" target="_blank" rel="noopener">FotoForensics</a></div><div class="tdesc">Аналіз фото (ELA) — допомагає помітити сліди монтажу.</div><div class="turl">fotoforensics.com</div></div></div>
+      <div class="tool"><div class="tic">📞</div><div><div class="tname"><a href="#" onclick="return false">«Стоп-кодове слово»</a></div><div class="tdesc">Не інструмент, а звичка: домовтеся з рідними про секретне слово для перевірки «термінових» дзвінків про гроші/біду.</div><div class="turl">офлайн-захист від клонованого голосу</div></div></div>
+    </div>
+
+    <div class="callout ok">
+      <span class="ci">☎️</span>
+      <div><b>Золоте правило проти deepfake-дзвінків.</b> Якщо «родич/начальниця» терміново просить гроші чи дані голосом або відео — <b>покладіть слухавку й передзвоніть самі</b> на відомий вам номер. Поставте контрольне запитання, відповідь на яке знає лише справжня людина.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VPO SCHEMES ============ -->
+<section id="vpo">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🏠</div>
+      <div><span class="tag">Лекція 1.2 · Блок 4</span><h2>Шахрайство з «допомогою ВПО» — реальні схеми</h2></div>
+    </div>
+
+    <p>Переселенці — окрема мішень: люди чекають на виплати, тож «лист про допомогу» легко спрацьовує. Нижче — схеми, які реально ходили Україною у 2024–2026 роках.</p>
+
+    <div class="grid g2">
+      <div class="card">
+        <h4>💸 «Виплата від ООН / УВКБ / ЮНІСЕФ»</h4>
+        <p style="color:var(--muted);margin:0 0 8px">У Telegram і соцмережах — «вам нараховано 6660 / 10 000 грн допомоги, перейдіть у бот і введіть номер картки та код з SMS». Веде на підроблений чат-бот.</p>
+        <p style="margin:0"><b style="color:var(--red)">Маркер:</b> просять CVV, код з SMS або «комісію» наперед. Справжні фонди цього не роблять.</p>
+      </div>
+      <div class="card">
+        <h4>📦 «Нова пошта: доплатіть за доставку»</h4>
+        <p style="color:var(--muted);margin:0 0 8px">«Не вдалося доставити посилку, доплатіть 38 грн» з лінком на сайт-клон, що краде дані картки.</p>
+        <p style="margin:0"><b style="color:var(--red)">Маркер:</b> оплата дрібної суми через дивний сайт = виманювання реквізитів картки.</p>
+      </div>
+      <div class="card">
+        <h4>🏦 «Дія / банк: підтвердьте дані»</h4>
+        <p style="color:var(--muted);margin:0 0 8px">SMS чи лист «вашу картку заблоковано / оновіть дані в Дії» з посиланням на фейковий вхід.</p>
+        <p style="margin:0"><b style="color:var(--red)">Маркер:</b> «Дія» не пише з проханням ввести пароль за посиланням. Заходьте лише через офіційний застосунок.</p>
+      </div>
+      <div class="card">
+        <h4>🤝 «Платні послуги з оформлення допомоги»</h4>
+        <p style="color:var(--muted);margin:0 0 8px">«Допоможемо оформити статус/виплату за невелику плату». Беруть гроші й зникають, інколи ще й крадуть документи.</p>
+        <p style="margin:0"><b style="color:var(--red)">Маркер:</b> офіційне оформлення допомоги ВПО — <b>безкоштовне</b>.</p>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <span class="ci">✅</span>
+      <div><b>Де перевіряти правду про виплати.</b> Лише офіційні джерела: <a href="https://www.unhcr.org/ua/" target="_blank" rel="noopener">UNHCR Україна (unhcr.org/ua)</a>, портал <a href="https://diia.gov.ua/" target="_blank" rel="noopener">Дія</a> та офіційні сторінки фондів. Співробітники фонду <b>ніколи</b> не питають CVV і код з SMS. Сумніваєтесь — телефонуйте на офіційну гарячу лінію організації, а не за номером із повідомлення.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRACTICE ============ -->
+<section id="practice">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🧪</div>
+      <div><span class="tag">Лекція 1.2 · Практика</span><h2>«Фішинг чи ні?» — розбір реальних повідомлень</h2></div>
+    </div>
+    <p>Прочитайте кожне повідомлення, оберіть свою відповідь — і відкрийте розбір. Робіть це разом із групою, проговорюючи ознаки вголос.</p>
+
+    <!-- example 1 -->
+    <div class="ex" data-answer="ph">
+      <div class="ex-head">📨 SMS <span class="src">від «PrivatBank»</span></div>
+      <div class="ex-body">
+        <div class="msg">PrivatBank: Шановний клієнте! Вашу картку ЗАБЛОКОВАНО через підозрілу операцію. Терміново підтвердьте дані протягом 2 годин, інакше рахунок буде закрито: <span class="lnk">https://privat24-bezpeka.top/verify</span></div>
+        <div class="ex-actions">
+          <button class="guess ph">🎣 Це фішинг</button>
+          <button class="guess sf">✅ Це безпечно</button>
+        </div>
+        <div class="verdict ph">
+          <div class="vh">🎣 Фішинг</div>
+          <p style="margin:0">Аж три прапори: <b>терміновість</b> («2 години»), <b>тиск страхом</b> («рахунок закрито»), і головне — <b>домен <span class="mono">privat24-bezpeka.top</span></b> не належить банку (справжній — <span class="mono">privat24.ua</span>). Звертання «Шановний клієнте» без імені. Дія: не клікати; зайти в застосунок банку самостійно або подзвонити на 3700.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- example 2 -->
+    <div class="ex" data-answer="ph">
+      <div class="ex-head">💬 Telegram <span class="src">канал «Допомога Україна»</span></div>
+      <div class="ex-body">
+        <div class="msg">🇺🇳 ООН оголосила виплати ВПО! Кожен переселенець отримає 6660 грн. Щоб отримати — перейдіть у бот @un_help_pay_bot, вкажіть номер картки та введіть код підтвердження з SMS. Встигніть до кінця тижня!</div>
+        <div class="ex-actions">
+          <button class="guess ph">🎣 Це фішинг</button>
+          <button class="guess sf">✅ Це безпечно</button>
+        </div>
+        <div class="verdict ph">
+          <div class="vh">🎣 Фішинг</div>
+          <p style="margin:0">Класична схема «виплати від ООН». Прапори: <b>несподівані гроші</b>, <b>код з SMS</b> (це фактично пароль до вашого банку!), <b>дедлайн</b>, неофіційний бот. Справжні фонди не збирають реквізити через випадкові Telegram-канали. Дія: перевірити лише на <span class="mono">unhcr.org/ua</span>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- example 3 -->
+    <div class="ex" data-answer="ph">
+      <div class="ex-head">✉️ Email <span class="src">від «Nova Poshta»</span></div>
+      <div class="ex-body">
+        <div class="msg">Тема: Не вдалося доставити ваше відправлення №59000XXXX
+Вашу посилку повернуть відправнику. Щоб переоформити доставку, доплатіть 38,00 грн за посиланням: <span class="lnk">np-dostavka.online/pay</span>
+Відправник: noreply@novaposhta-delivery.gmail.com</div>
+        <div class="ex-actions">
+          <button class="guess ph">🎣 Це фішинг</button>
+          <button class="guess sf">✅ Це безпечно</button>
+        </div>
+        <div class="verdict ph">
+          <div class="vh">🎣 Фішинг</div>
+          <p style="margin:0">Прапори: <b>домен-клон</b> <span class="mono">np-dostavka.online</span> (офіційний — <span class="mono">novaposhta.ua</span>), адреса відправника на <span class="mono">@…gmail.com</span>, прохання <b>оплати картою</b> за дрібну суму. Так крадуть дані картки. Дія: перевірити статус посилки лише в офіційному застосунку/сайті за номером ТТН.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- example 4: legit -->
+    <div class="ex" data-answer="sf">
+      <div class="ex-head">🔐 Email <span class="src">від Google</span></div>
+      <div class="ex-body">
+        <div class="msg">Новий вхід у ваш акаунт Google
+Пристрій: Windows · Київ, Україна · 25 черв. 2026
+Якщо це були ви — нічого робити не потрібно.
+Якщо ні — перевірте безпеку акаунта.
+Відправник: no-reply@accounts.google.com</div>
+        <div class="ex-actions">
+          <button class="guess ph">🎣 Це фішинг</button>
+          <button class="guess sf">✅ Це безпечно</button>
+        </div>
+        <div class="verdict sf">
+          <div class="vh">✅ Радше безпечно (легітимне сповіщення)</div>
+          <p style="margin:0">Це справжній тип листа Google: відправник <span class="mono">@accounts.google.com</span>, <b>не просить</b> ввести пароль за посиланням, не тисне й не лякає. Але правило безпеки: не клікати кнопку в листі, а зайти в безпеку акаунта <b>самостійно</b> через <span class="mono">myaccount.google.com</span>. Так ви захищені, навіть якщо лист виявиться вдалою підробкою.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">🎯</span>
+      <div><b>Висновок практики.</b> Алгоритм на щодня: <b>Стоп → Перевір відправника й домен → Не клікай, зайди сам → Сумніваєшся — спитай/передзвони офіційно.</b> Емоція + терміновість + прохання даних = майже завжди фішинг.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.3 OSINT ============ -->
+<section id="l13">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">1.3</div>
+      <div><span class="tag">Лекція 1.3 · OSINT-гігієна</span><h2>Що про вас видно публічно — і як це прибрати</h2></div>
+    </div>
+
+    <p><b>OSINT</b> (Open-Source Intelligence) — збір інформації про людину з відкритих джерел: соцмереж, фото, оголошень, витоків баз. «Захисний OSINT» — це коли ви <b>самі гуглите себе</b>, щоб побачити свою вразливість очима шахрая чи переслідувача й закрити дірки.</p>
+
+    <div class="callout warn">
+      <span class="ci">📍</span>
+      <div><b>Чому це критично для ВПО та військових.</b> Один пост із локацією, фото на тлі впізнаваного будинку чи позначка «друзі поруч» можуть розкрити, де ви зараз живете. Для переселенок, жінок-військових та їхніх родин це питання не лише приватності, а й фізичної безпеки.</div>
+    </div>
+
+    <h3>🔍 Крок 1. Знайдіть себе так, як це зробив би шахрай</h3>
+    <div class="grid g2">
+      <div class="card">
+        <h4>Що шукати</h4>
+        <ul class="clean">
+          <li>Ім'я та прізвище в лапках: <span class="mono">"Ім'я Прізвище"</span> — у Google, Bing, соцмережах.</li>
+          <li>Номер телефону та email — чи «світяться» в оголошеннях, чатах, витоках.</li>
+          <li>Своє фото — зворотним пошуком (де ще воно є в мережі).</li>
+          <li>Старі акаунти OLX, форуми, фото з геоміткою.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🧰 Інструменти «перевір себе»</h4>
+        <div class="tool" style="border:0;padding:8px 0"><div class="tic">🔓</div><div><div class="tname"><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Have I Been Pwned</a></div><div class="tdesc">Чи потрапляв ваш email/телефон у витоки баз. Якщо так — змініть паролі цих сервісів.</div><div class="turl">haveibeenpwned.com</div></div></div>
+        <div class="tool" style="border:0;padding:8px 0"><div class="tic">👤</div><div><div class="tname"><a href="https://whatsmyname.app/" target="_blank" rel="noopener">WhatsMyName</a></div><div class="tdesc">Шукає ваш нікнейм на сотнях сайтів — знаходить забуті акаунти.</div><div class="turl">whatsmyname.app</div></div></div>
+        <div class="tool" style="border:0;padding:8px 0"><div class="tic">🖼️</div><div><div class="tname"><a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens / TinEye</a></div><div class="tdesc">Зворотний пошук вашого фото: де воно ще використовується.</div><div class="turl">lens.google · tineye.com</div></div></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:26px">🔒 Крок 2. Налаштування приватності у соцмережах</h3>
+    <div class="grid g3">
+      <div class="card"><span class="ic">👥</span><h4>Хто бачить пости</h4><p style="margin:0;color:var(--muted)">Переведіть профіль у приватний / «лише друзі». Старі публічні пости — масово закрийте (FB: «Обмежити минулі дописи»).</p></div>
+      <div class="card"><span class="ic">📍</span><h4>Геолокація</h4><p style="margin:0;color:var(--muted)">Вимкніть позначки місця, «друзі поруч», live-локацію. Не постіть із місця в реальному часі — публікуйте згодом.</p></div>
+      <div class="card"><span class="ic">🫂</span><h4>Список друзів</h4><p style="margin:0;color:var(--muted)">Сховайте список друзів і підписників — через нього виходять на ваше коло й вашу локацію.</p></div>
+      <div class="card"><span class="ic">📵</span><h4>Телефон і email</h4><p style="margin:0;color:var(--muted)">Приберіть номер і пошту з видимих полів профілю. ЗаборонІть пошук за номером телефону.</p></div>
+      <div class="card"><span class="ic">🏷️</span><h4>Позначки на фото</h4><p style="margin:0;color:var(--muted)">Увімкніть перевірку позначок (tag review) — щоб вас не «відмічали» на фото з локацією без згоди.</p></div>
+      <div class="card"><span class="ic">🔗</span><h4>Зв'язані застосунки</h4><p style="margin:0;color:var(--muted)">Перегляньте, яким стороннім додаткам ви дали доступ, і відключіть зайве.</p></div>
+    </div>
+
+    <h3 style="margin-top:26px">🧷 Крок 3. Геодані і фото — невидима небезпека</h3>
+    <p>Кожне фото може нести <b>EXIF</b> — приховані дані: модель телефону, точні <b>GPS-координати</b>, дату й час. Плюс сам кадр видає локацію через фон.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h4>Що видає вашу локацію</h4>
+        <ul class="clean flag">
+          <li><b>GPS у EXIF</b> — точні координати, де зроблено фото.</li>
+          <li><b>Фон:</b> номер будинку, вивіска, маршрутка, краєвид з вікна, орієнтири.</li>
+          <li><b>Серія фото:</b> разом малюють ваш маршрут і розпорядок дня.</li>
+          <li><b>Документи/посадкові талони</b> на фото — адреса, номер рейсу, ПІБ.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Як захиститися</h4>
+        <ul class="clean check">
+          <li>Вимкніть геомітку в камері (iPhone: Налаштування → Конфіденційність → Камера → Ніколи).</li>
+          <li>Перед публікацією <b>зніміть метадані</b> (інструменти нижче) або робіть скрін фото — скрін не містить GPS.</li>
+          <li>Не публікуйте локацію в реальному часі; перевіряйте фон кадру.</li>
+          <li>Месенджери часто стискають фото й чистять EXIF — але не покладайтесь на це завжди.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tools">
+      <div class="tool"><div class="tic">🧹</div><div><div class="tname"><a href="https://jimpl.com/" target="_blank" rel="noopener">Jimpl</a></div><div class="tdesc">Подивитися та видалити EXIF/GPS із фото онлайн.</div><div class="turl">jimpl.com</div></div></div>
+      <div class="tool"><div class="tic">🧾</div><div><div class="tname"><a href="https://www.metadata2go.com/" target="_blank" rel="noopener">Metadata2Go</a></div><div class="tdesc">Перегляд усіх прихованих метаданих файлу.</div><div class="turl">metadata2go.com</div></div></div>
+      <div class="tool"><div class="tic">📷</div><div><div class="tname"><a href="https://exifpurge.com/" target="_blank" rel="noopener">ExifPurge</a></div><div class="tdesc">Пакетне видалення метаданих із багатьох фото одразу (для ПК).</div><div class="turl">exifpurge.com</div></div></div>
+      <div class="tool"><div class="tic">🌍</div><div><div class="tname"><a href="https://www.google.com/search?q=results+about+you+google" target="_blank" rel="noopener">Google «Результати про вас»</a></div><div class="tdesc">Запит на видалення вашого телефону/адреси з пошуку Google.</div><div class="turl">support.google.com → Results about you</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST (ARTEFACT) ============ -->
+<section id="checklist">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">📋</div>
+      <div><span class="tag">Артефакт · забираєте з собою</span><h2>Особистий security-checklist</h2>
+      <p style="color:var(--muted);margin:0">Відмічайте пункти прямо тут — прогрес збережеться у вашому браузері. Натисніть «Друк / зберегти PDF», щоб мати власну копію. <b>Домашнє: завершити чек-лист і виконати щонайменше 3 пункти.</b></p></div>
+    </div>
+
+    <div class="cl-wrap no-print-actions">
+      <div class="cl-top">
+        <h3>🛡️ Мій рівень захисту</h3>
+        <div class="cl-progress"><i id="clBar"></i></div>
+        <div class="cl-stat"><span>Виконано <b id="clDone">0</b> з <b id="clTotal">0</b></span><span id="clPct" class="mono">0%</span></div>
+      </div>
+
+      <div class="cl-group">
+        <div class="gh"><span class="gi">🔑</span> Паролі</div>
+        <div class="cl-item"><input type="checkbox" id="c1"><label for="c1"><span class="ci-t">Встановила менеджер паролів</span><span class="ci-d">Bitwarden / KeePassXC / Proton Pass — щоб не тримати паролі в голові й нотатках. <a href="https://bitwarden.com/" target="_blank" rel="noopener">bitwarden.com</a></span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c2"><label for="c2"><span class="ci-t">Унікальний пароль для пошти й банку</span><span class="ci-d">Пошта — ключ до всіх акаунтів. Її пароль не повторюється ніде.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c3"><label for="c3"><span class="ci-t">Перевірила себе на витоки</span><span class="ci-d">Пройшла <a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">haveibeenpwned.com</a> і змінила паролі скомпрометованих сервісів.</span></label></div>
+      </div>
+
+      <div class="cl-group">
+        <div class="gh"><span class="gi">📱</span> Двофакторна автентифікація (2FA)</div>
+        <div class="cl-item"><input type="checkbox" id="c4"><label for="c4"><span class="ci-t">Увімкнула 2FA на пошті</span><span class="ci-d">Найважливіше. Через додаток-автентифікатор, а не лише SMS.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c5"><label for="c5"><span class="ci-t">Поставила додаток-автентифікатор</span><span class="ci-d">Aegis / 2FAS / Ente Auth — надійніше за SMS (захищає від підміни SIM). <a href="https://2fas.com/" target="_blank" rel="noopener">2fas.com</a></span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c6"><label for="c6"><span class="ci-t">Увімкнула passkey, де можливо</span><span class="ci-d">Passkeys/біометрія — найстійкіші до фішингу. Перевірте підтримку: <a href="https://passkeys.directory/" target="_blank" rel="noopener">passkeys.directory</a></span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c7"><label for="c7"><span class="ci-t">Зберегла резервні коди 2FA</span><span class="ci-d">Офлайн, у надійному місці — щоб не втратити доступ.</span></label></div>
+      </div>
+
+      <div class="cl-group">
+        <div class="gh"><span class="gi">🔒</span> Приватність</div>
+        <div class="cl-item"><input type="checkbox" id="c8"><label for="c8"><span class="ci-t">Закрила профілі в соцмережах</span><span class="ci-d">Приватний акаунт; обмежила видимість старих дописів.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c9"><label for="c9"><span class="ci-t">Сховала список друзів і контакти</span><span class="ci-d">Прибрала телефон/email із видимих полів; заборонила пошук за номером.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c10"><label for="c10"><span class="ci-t">Вимкнула геолокацію та позначки</span><span class="ci-d">Без live-локації; перевірка позначок на фото увімкнена.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c11"><label for="c11"><span class="ci-t">Прибрала EXIF із фото для публікацій</span><span class="ci-d">Вимкнула геомітку в камері; чищу метадані перед постингом.</span></label></div>
+      </div>
+
+      <div class="cl-group">
+        <div class="gh"><span class="gi">💬</span> Месенджери</div>
+        <div class="cl-item"><input type="checkbox" id="c12"><label for="c12"><span class="ci-t">Поставила PIN / passcode на Telegram, Signal</span><span class="ci-d">Telegram: увімкнула «Хмарний пароль» (2FA) у налаштуваннях.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c13"><label for="c13"><span class="ci-t">Сховала номер телефону</span><span class="ci-d">Telegram: «Хто бачить мій номер» → Ніхто; додала username для контактів.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c14"><label for="c14"><span class="ci-t">Перевірила активні сесії й пристрої</span><span class="ci-d">Завершила незнайомі сесії в пошті, соцмережах і месенджерах.</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c15"><label for="c15"><span class="ci-t">Домовилась про «кодове слово» з рідними</span><span class="ci-d">Захист від дзвінків із клонованим голосом про «термінову біду».</span></label></div>
+      </div>
+
+      <div class="cl-actions no-print">
+        <button class="btn btn-yellow" onclick="window.print()">🖨️ Друк / зберегти PDF</button>
+        <button class="btn btn-ghost" onclick="resetChecklist()">↺ Скинути</button>
+        <span style="align-self:center;color:var(--muted);font-size:.86rem">💾 Прогрес зберігається автоматично у цьому браузері.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="game" class="no-print">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🎮</div>
+      <div><span class="tag">Симуляція · фінал заняття</span><h2>Гра «Інбокс під вогнем»</h2>
+      <p style="color:var(--muted);margin:0">Перед вами — потік повідомлень. Вирішуйте швидко: <b>фішинг</b> чи <b>безпечно</b>. За правильні — бали, за помилки — втрачаєте «щит». Пройдіть усі 8 і дізнайтесь свій ранг кіберстійкості.</p></div>
+    </div>
+
+    <div class="game">
+      <div class="game-top">
+        <span class="gt">🛰️ Інбокс-симулятор</span>
+        <div class="game-stats">
+          <span>Раунд <b id="gRound">1</b>/8</span>
+          <span>Бали <b id="gScore">0</b></span>
+          <span>Щит <b id="gLives">🛡️🛡️🛡️</b></span>
+        </div>
+      </div>
+      <div class="game-stage">
+        <div class="bar"><i id="gBar"></i></div>
+        <div id="gScene" class="scene" style="margin-top:16px"></div>
+        <div id="gControls" class="game-controls">
+          <button class="btn btn-primary" style="background:linear-gradient(135deg,var(--red),#c0283a)" onclick="gameAnswer('ph')">🎣 Фішинг</button>
+          <button class="btn btn-primary" style="background:linear-gradient(135deg,var(--green),#1c9c52)" onclick="gameAnswer('sf')">✅ Безпечно</button>
+        </div>
+        <div id="gFb" class="game-fb"></div>
+      </div>
+    </div>
+    <p class="divider-note">Підказка: шукайте домен, прохання даних/коду, терміновість і несподівані «гроші».</p>
+  </div>
+</section>
+
+<!-- ============ HOMEWORK ============ -->
+<section id="homework">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🎯</div>
+      <div><span class="tag">Домашнє завдання</span><h2>До наступної зустрічі</h2></div>
+    </div>
+    <div class="hw">
+      <div class="card">
+        <span class="due">Лекція 1.2</span>
+        <h4>Знайти «свого» фішера</h4>
+        <p style="color:var(--muted);margin:0 0 10px">Знайдіть у власних повідомленнях/пошті <b>один підозрілий лист чи повідомлення</b> (з минулого досвіду або нове) й опишіть його:</p>
+        <ul class="clean">
+          <li>Скрін повідомлення (заховайте особисті дані).</li>
+          <li>Які <b>ознаки фішингу</b> ви помітили (терміновість? домен? прохання даних?).</li>
+          <li>Що з ним правильно зробити.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="due">Лекція 1.3</span>
+        <h4>Завершити чек-лист + 3 дії</h4>
+        <p style="color:var(--muted);margin:0 0 10px">Доведіть <a href="#checklist">особистий security-checklist</a> до кінця та <b>виконайте щонайменше 3 пункти</b> з нього, наприклад:</p>
+        <ul class="clean check">
+          <li>Увімкнути 2FA на пошті через додаток-автентифікатор.</li>
+          <li>Поставити менеджер паролів і змінити 1 повторюваний пароль.</li>
+          <li>Перевірити себе на haveibeenpwned і прибрати геолокацію з фото.</li>
+        </ul>
+        <p style="margin:10px 0 0;color:var(--muted)">Запишіть, <b>які саме 3 дії</b> ви зробили.</p>
+      </div>
+    </div>
+    <div class="callout info">
+      <span class="ci">📤</span>
+      <div><b>Як здати.</b> Надішліть короткий звіт (скрін + опис ознак + ваші 3 виконані пункти) кураторці групи у форматі, домовленому в чаті школи. Це найважливіша частина — теорія працює лише тоді, коли ви її застосували.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="sources">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">📚</div>
+      <div><span class="tag">Додаткова література</span><h2>Джерела та куди читати далі</h2></div>
+    </div>
+    <div class="res-grid">
+      <div class="res">
+        <h4>🇺🇦 Українські офіційні та освітні</h4>
+        <ul>
+          <li><a href="https://osvita.diia.gov.ua/cyberhygiene" target="_blank" rel="noopener">Дія.Освіта — Кібергігієна</a> <span class="d">· безкоштовні курси та практичні гайди (оновлено 2025)</span></li>
+          <li><a href="https://cyberpolice.gov.ua/" target="_blank" rel="noopener">Департамент кіберполіції України</a> <span class="d">· новини про схеми, поради</span></li>
+          <li><a href="https://ticket.cyberpolice.gov.ua/" target="_blank" rel="noopener">Подати заяву в кіберполіцію</a> <span class="d">· якщо ви постраждали</span></li>
+          <li><a href="https://filter.org.ua/" target="_blank" rel="noopener">Фільтр — медіаграмотність</a> <span class="d">· нацпроєкт Мінкульту, як розпізнавати фейки</span></li>
+          <li><a href="https://prometheus.org.ua/" target="_blank" rel="noopener">Prometheus — «Інформаційна безпека»</a> <span class="d">· безкоштовний онлайн-курс</span></li>
+          <li><a href="https://hackyourmom.com/" target="_blank" rel="noopener">HackYourMom</a> <span class="d">· кіберграмотність простою мовою</span></li>
+          <li><a href="https://cybereducation.org/" target="_blank" rel="noopener">CyberEducation</a> <span class="d">· базові правила безпеки в цифрі</span></li>
+        </ul>
+      </div>
+      <div class="res">
+        <h4>🔎 Перевірка фактів і фейків</h4>
+        <ul>
+          <li><a href="https://www.stopfake.org/uk/golovna/" target="_blank" rel="noopener">StopFake</a> <span class="d">· викриття дезінформації</span></li>
+          <li><a href="https://voxukraine.org/voxcheck" target="_blank" rel="noopener">VoxCheck</a> <span class="d">· фактчекінг від VoxUkraine</span></li>
+          <li><a href="https://without-lie.info/" target="_blank" rel="noopener">«Без брехні»</a> <span class="d">· розбір фейків і шахрайства</span></li>
+          <li><a href="https://www.bank.gov.ua/ua/about/fraud-protection" target="_blank" rel="noopener">НБУ #ШахрайГудбай</a> <span class="d">· фінансова безпека</span></li>
+        </ul>
+      </div>
+      <div class="res">
+        <h4>🛠️ Інструменти захисту (всі лінки активні)</h4>
+        <ul>
+          <li><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Have I Been Pwned</a> <span class="d">· перевірка витоків</span></li>
+          <li><a href="https://www.virustotal.com/" target="_blank" rel="noopener">VirusTotal</a> · <a href="https://urlscan.io/" target="_blank" rel="noopener">urlscan.io</a> <span class="d">· перевірка лінків і файлів</span></li>
+          <li><a href="https://checkshorturl.com/" target="_blank" rel="noopener">CheckShortURL</a> <span class="d">· розгортання коротких лінків</span></li>
+          <li><a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a> · <a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens</a> <span class="d">· зворотний пошук фото</span></li>
+          <li><a href="https://jimpl.com/" target="_blank" rel="noopener">Jimpl</a> <span class="d">· перегляд і видалення EXIF</span></li>
+          <li><a href="https://whatsmyname.app/" target="_blank" rel="noopener">WhatsMyName</a> <span class="d">· пошук своїх акаунтів за ніком</span></li>
+          <li><a href="https://bitwarden.com/" target="_blank" rel="noopener">Bitwarden</a> · <a href="https://2fas.com/" target="_blank" rel="noopener">2FAS</a> <span class="d">· паролі та 2FA</span></li>
+        </ul>
+      </div>
+      <div class="res">
+        <h4>🌍 Міжнародні рекомендації</h4>
+        <ul>
+          <li><a href="https://www.ncsc.gov.uk/section/information-for/individuals-families" target="_blank" rel="noopener">NCSC (Велика Британія)</a> <span class="d">· захист для людей і родин</span></li>
+          <li><a href="https://www.cisa.gov/secure-our-world" target="_blank" rel="noopener">CISA — Secure Our World</a> <span class="d">· паролі, 2FA, фішинг</span></li>
+          <li><a href="https://www.unhcr.org/ua/" target="_blank" rel="noopener">UNHCR Україна</a> <span class="d">· офіційна інформація про допомогу ВПО</span></li>
+          <li><a href="https://www.media.mit.edu/projects/detect-fakes/overview/" target="_blank" rel="noopener">MIT Detect Fakes</a> <span class="d">· як впізнавати deepfake</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout danger" style="margin-top:20px">
+      <span class="ci">🆘</span>
+      <div><b>Якщо ви вже постраждали.</b> 1) Негайно змініть паролі (з іншого, чистого пристрою). 2) Зателефонуйте в банк, заблокуйте картку. 3) Увімкніть 2FA. 4) Зверніться в кіберполіцію: гаряча лінія <b>0&nbsp;800&nbsp;505&nbsp;170</b> або заява на <a href="https://ticket.cyberpolice.gov.ua/" target="_blank" rel="noopener">ticket.cyberpolice.gov.ua</a>. Не соромтесь — на шахраїв «ловляться» навіть фахівці.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="no-print">
+  <div class="wrap fl">
+    <div>
+      <div class="brand" style="margin-bottom:8px"><span class="mark">🛡️</span> <span>Школа кіберстійкості · ГО «Українська валькірія»</span></div>
+      <div style="color:var(--dim);font-size:.84rem">Модуль 1 · Лекції 1.2 + 1.3 · 25.06.2026 · Матеріал для навчальних цілей.</div>
+    </div>
+    <div style="font-size:.84rem;color:var(--dim);max-width:42ch">
+      Натисніть <span class="kbd">Ctrl/Cmd</span> + <span class="kbd">P</span> у розділі «Чек-лист», щоб зберегти його як PDF. Лінки відкриваються у новій вкладці.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- progress bar + scroll-spy ---------- */
+const prog=document.getElementById('progress');
+const navLinks=[...document.querySelectorAll('.nav-links a')];
+const secs=navLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function onScroll(){
+  const h=document.documentElement;
+  const sc=h.scrollTop, max=h.scrollHeight-h.clientHeight;
+  prog.style.width=(max>0?(sc/max*100):0)+'%';
+  let cur=secs[0];
+  for(const s of secs){ if(s.getBoundingClientRect().top<=120) cur=s; }
+  navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+(cur&&cur.id)));
+}
+document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navlinks').classList.remove('open')));
+
+/* ---------- safe localStorage ---------- */
+const store={
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ---------- practice example cards ---------- */
+document.querySelectorAll('.ex').forEach(ex=>{
+  const ans=ex.dataset.answer;
+  const vPh=ex.querySelector('.verdict.ph'), vSf=ex.querySelector('.verdict.sf');
+  ex.querySelectorAll('.guess').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      ex.querySelectorAll('.verdict').forEach(v=>v.classList.remove('show'));
+      (ans==='ph'?vPh:vSf).classList.add('show');
+      const chose=btn.classList.contains('ph')?'ph':'sf';
+      ex.querySelectorAll('.guess').forEach(b=>b.style.opacity=.55);
+      btn.style.opacity=1;
+      btn.style.borderColor=(chose===ans)?'var(--green)':'var(--red)';
+    });
+  });
+});
+
+/* ---------- quizzes ---------- */
+document.querySelectorAll('.quiz').forEach(q=>{
+  const opts=q.querySelectorAll('.opt'), fb=q.querySelector('.qfb');
+  opts.forEach(o=>o.addEventListener('click',()=>{
+    opts.forEach(x=>{x.classList.remove('correct','wrong'); x.querySelector('input').checked=false});
+    o.querySelector('input').checked=true;
+    if(o.dataset.correct){o.classList.add('correct')}else{
+      o.classList.add('wrong');
+      q.querySelector('.opt[data-correct]').classList.add('correct');
+    }
+    fb.classList.add('show');
+  }));
+});
+
+/* ---------- checklist ---------- */
+const clBoxes=[...document.querySelectorAll('.cl-item input[type=checkbox]')];
+const clBar=document.getElementById('clBar'),clDone=document.getElementById('clDone'),
+      clTotal=document.getElementById('clTotal'),clPct=document.getElementById('clPct');
+clTotal.textContent=clBoxes.length;
+function clRender(){
+  const done=clBoxes.filter(b=>b.checked).length;
+  clDone.textContent=done;
+  const pct=Math.round(done/clBoxes.length*100);
+  clBar.style.width=pct+'%'; clPct.textContent=pct+'%';
+  clBoxes.forEach(b=>b.closest('.cl-item').classList.toggle('done',b.checked));
+}
+clBoxes.forEach(b=>{
+  if(store.get('cl_'+b.id)==='1') b.checked=true;
+  b.addEventListener('change',()=>{store.set('cl_'+b.id,b.checked?'1':'0'); clRender();});
+});
+clRender();
+function resetChecklist(){clBoxes.forEach(b=>{b.checked=false; store.del('cl_'+b.id)}); clRender();}
+
+/* ---------- game: inbox simulator ---------- */
+const ROUNDS=[
+ {from:'PrivatBank &lt;info@privat24-secure.top&gt;',subj:'⚠ Картку заблоковано — підтвердьте за 1 годину',
+  body:'Перейдіть: <span class="lnk">privat24-secure.top/login</span> та введіть пароль і код з SMS.',a:'ph',
+  why:'Домен <b>privat24-secure.top</b> не банку, терміновість, прохання пароля й коду з SMS.'},
+ {from:'Google &lt;no-reply@accounts.google.com&gt;',subj:'Підозрілий вхід заблоковано',
+  body:'Ми зупинили спробу входу з нового пристрою. Якщо це не ви — перевірте безпеку акаунта. Пароль вводити не потрібно.',a:'sf',
+  why:'Справжній домен Google, не просить пароль за лінком, без тиску. Все одно заходьте через myaccount.google.com самі.'},
+ {from:'Канал «Виплати ВПО» (Telegram)',subj:'🇺🇳 Допомога 6660 грн від ООН — отримайте сьогодні',
+  body:'Введіть номер картки та код з SMS у боті @oon_pay, щоб отримати кошти.',a:'ph',
+  why:'«Виплата від ООН» + код з SMS + дедлайн = класичний фішинг проти переселенців.'},
+ {from:'Нова Пошта &lt;noreply@np-dostavka.online&gt;',subj:'Доплатіть 38 грн за доставку',
+  body:'Інакше посилку повернуть. Оплата карткою: <span class="lnk">np-dostavka.online/pay</span>',a:'ph',
+  why:'Домен-клон, прохання оплати дрібної суми карткою на дивному сайті.'},
+ {from:'Школа «Українська валькірія»',subj:'Нагадування про заняття завтра о 18:00',
+  body:'Завтра — лекція 1.2. Матеріали вже на сайті школи. До зустрічі!',a:'sf',
+  why:'Очікуване повідомлення від відомого джерела, без лінків-пасток і прохань даних.'},
+ {from:'«Олена» (нове знайомство, Instagram)',subj:'Привіт! Ти мені дуже сподобалась…',
+  body:'За тиждень спілкування: «Я за кордоном, застрягла, позич 4000 грн на квиток, поверну». Від відеодзвінка ухиляється.',a:'ph',
+  why:'Романтичне шахрайство/catfishing: швидке зближення, уникання відео, прохання грошей.'},
+ {from:'noreply@meta-support-help.com',subj:'Ваш акаунт Instagram буде видалено',
+  body:'Порушення авторських прав. Подайте апеляцію за 24 год: <span class="lnk">meta-support-help.com/appeal</span> (вхід через пароль).',a:'ph',
+  why:'Підроблений домен «підтримки Meta», страх видалення, збір логіна й пароля.'},
+ {from:'Дія &lt;Государственные услуги&gt;',subj:'Оновіть дані інакше втратите виплати',
+  body:'Терміново авторизуйтесь і вкажіть дані картки: <span class="lnk">diia-gov.help/update</span>',a:'ph',
+  why:'«Дія» не питає дані картки за посиланням; домен <b>diia-gov.help</b> — підробка (справжній diia.gov.ua).'}
+];
+let gI=0,gScore=0,gLives=3,gAnswered=false;
+const gScene=document.getElementById('gScene'),gFb=document.getElementById('gFb'),
+      gControls=document.getElementById('gControls');
+function gRender(){
+  gAnswered=false; gFb.className='game-fb';
+  document.getElementById('gRound').textContent=Math.min(gI+1,ROUNDS.length);
+  document.getElementById('gScore').textContent=gScore;
+  document.getElementById('gLives').textContent='🛡️'.repeat(gLives)||'—';
+  document.getElementById('gBar').style.width=(gI/ROUNDS.length*100)+'%';
+  gControls.style.display='flex';
+  const r=ROUNDS[gI];
+  gScene.innerHTML=`<div class="inbox"><div class="from">Від: <b>${r.from}</b></div><div class="subj">${r.subj}</div><div>${r.body}</div></div>`;
+}
+function gameAnswer(choice){
+  if(gAnswered) return; gAnswered=true;
+  const r=ROUNDS[gI], correct=(choice===r.a);
+  if(correct) gScore+=10; else gLives--;
+  document.getElementById('gScore').textContent=gScore;
+  document.getElementById('gLives').textContent='🛡️'.repeat(Math.max(gLives,0))||'💔';
+  gFb.className='game-fb show '+(correct?'good':'bad');
+  gFb.innerHTML=`<b>${correct?'✅ Правильно! +10':'❌ Хибно'}</b> — ${r.a==='ph'?'це <b>фішинг</b>':'це <b>безпечно</b>'}. ${r.why}
+     <div class="next"><button class="btn btn-ghost" onclick="gNext()">${gI<ROUNDS.length-1?'Далі →':'Підсумок'}</button></div>`;
+  gControls.style.display='none';
+  if(gLives<=0){ setTimeout(gEnd,300); }
+}
+function gNext(){ if(gI<ROUNDS.length-1){gI++; gRender();} else gEnd(); }
+function gEnd(){
+  document.getElementById('gBar').style.width='100%';
+  gControls.style.display='none'; gFb.className='game-fb';
+  const max=ROUNDS.length*10, pct=Math.round(gScore/max*100);
+  let rank,color,emoji;
+  if(gLives<=0){rank='Щит пробито — спробуйте ще!';color='var(--red)';emoji='💔';}
+  else if(pct>=90){rank='Кіберваль­кірія';color='var(--green)';emoji='🏆';}
+  else if(pct>=60){rank='Пильна — добре!';color='var(--cyan)';emoji='🛡️';}
+  else{rank='Новобранка — тренуйтесь';color='var(--amber)';emoji='⚠️';}
+  const best=Math.max(gScore, +(store.get('game_best')||0)); store.set('game_best',best);
+  gScene.innerHTML=`<div class="result">
+     <div style="font-size:2.6rem">${emoji}</div>
+     <div class="score">${gScore}<span style="font-size:1.1rem;color:var(--muted)">/${max}</span></div>
+     <div class="badge" style="border:1px solid ${color};color:${color}">${rank}</div>
+     <p style="color:var(--muted);margin:14px 0 0">Правильних рішень: ${gScore/10} з ${ROUNDS.length}. Рекорд: ${best} балів.</p>
+     <div style="margin-top:16px"><button class="btn btn-primary" onclick="gReset()">↺ Зіграти ще</button></div>
+   </div>`;
+}
+function gReset(){gI=0;gScore=0;gLives=3;gRender();}
+gRender();
+</script>
+</body>
+</html>
