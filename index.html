@@ -258,6 +258,36 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
 .two-col{columns:2; column-gap:28px}
 .anchor{position:relative; top:-72px; visibility:hidden}
 
+/* lecturer */
+.lecturer{display:flex; gap:22px; align-items:center}
+.lec-photo{width:88px; height:88px; flex:0 0 auto; border-radius:20px; display:grid; place-items:center;
+  font-family:var(--mono); font-weight:700; font-size:1.7rem; color:#fff; letter-spacing:.04em;
+  background:linear-gradient(135deg,var(--blue),#16336e); box-shadow:var(--glow-blue)}
+.lec-body{flex:1; min-width:0}
+.lec-body h3{margin:.15em 0 .35em; font-size:1.4rem}
+.lec-links{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.lec-link{display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border-radius:10px;
+  border:1px solid var(--line2); background:var(--card2); color:var(--ink); font-weight:600; font-size:.86rem; font-family:var(--mono); transition:.15s}
+.lec-link:hover{border-color:var(--cyan); color:var(--cyan); text-decoration:none; transform:translateY(-1px)}
+@media(max-width:560px){.lecturer{flex-direction:column; text-align:center} .lec-links{justify-content:center}}
+
+/* table of contents */
+ol.toc{margin:8px 0 0; padding-left:22px}
+ol.toc li{padding:8px 0; border-bottom:1px dashed var(--line)}
+ol.toc li:last-child{border-bottom:0}
+ol.toc li::marker{color:var(--cyan); font-family:var(--mono); font-weight:700}
+ol.toc a{color:var(--ink)} ol.toc a:hover{color:var(--cyan)}
+
+/* video grid */
+.video-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:6px}
+.vid{display:block; border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--card); transition:.15s}
+.vid:hover{border-color:var(--cyan); transform:translateY(-2px); text-decoration:none}
+.vid .vt{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink)}
+.vid .vp{width:34px; height:34px; flex:0 0 auto; border-radius:9px; display:grid; place-items:center; background:var(--red-soft); border:1px solid rgba(255,77,97,.4); font-size:15px}
+.vid .vd{font-size:.84rem; color:var(--muted); margin-top:8px}
+.vid .vch{font-family:var(--mono); font-size:.74rem; color:var(--cyan); margin-top:6px}
+@media(max-width:860px){.video-grid{grid-template-columns:1fr}}
+
 @media(max-width:860px){
   .g2,.g3,.tools,.res-grid,.hw{grid-template-columns:1fr}
   .two-col{columns:1}
@@ -295,12 +325,13 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
     </div>
     <button class="nav-toggle" aria-label="Меню" onclick="document.getElementById('navlinks').classList.toggle('open')">☰</button>
     <nav class="nav-links" id="navlinks">
-      <a href="#agenda">Програма</a>
+      <a href="#lecturer">Лектор</a>
+      <a href="#agenda">Зміст</a>
       <a href="#l12">1.2 Фішинг</a>
       <a href="#deepfake">Deepfake</a>
-      <a href="#vpo">Схеми ВПО</a>
-      <a href="#practice">Практика</a>
       <a href="#l13">1.3 OSINT</a>
+      <a href="#osint-methods">Методи</a>
+      <a href="#video">Відео</a>
       <a href="#checklist">Чек-лист</a>
       <a href="#game">Гра</a>
       <a href="#homework">Домашнє</a>
@@ -330,31 +361,59 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
   </div>
 </div>
 
+<!-- ============ LECTURER ============ -->
+<section id="lecturer">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="card glow lecturer">
+      <div class="lec-photo">ОМ</div>
+      <div class="lec-body">
+        <span class="tag">Лектор</span>
+        <h3>Олексій Мацука</h3>
+        <p style="margin:0;color:var(--muted)">Журналіст і медіаменеджер, експерт зі стратегічних комунікацій, протидії дезінформації та наративної аналітики. Працює з темами інформаційної безпеки, проєктного управління й медіа. Проводить заняття школи кіберстійкості ГО «Українська валькірія».</p>
+        <div class="lec-links">
+          <a href="https://x.com/alexmazuka" target="_blank" rel="noopener" class="lec-link">𝕏 x.com/alexmazuka</a>
+          <a href="https://matsuka.online" target="_blank" rel="noopener" class="lec-link">🌐 matsuka.online</a>
+          <a href="https://matsuka.wiki" target="_blank" rel="noopener" class="lec-link">📚 matsuka.wiki</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ AGENDA ============ -->
 <section id="agenda">
   <span class="anchor"></span>
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">⏱</div>
-      <div><span class="tag">Тайм-план</span><h2>Програма на 90 хвилин</h2>
-      <p style="color:var(--muted);margin:0">Заняття поєднує дві лекції модуля та практику. Орієнтовний таймінг — кураторка може гнучко зміщувати блоки.</p></div>
+      <div class="sec-num">≡</div>
+      <div><span class="tag">Зміст заняття</span><h2>Програма</h2>
+      <p style="color:var(--muted);margin:0">Дві лекції модуля, практика, поглиблений OSINT, відеорозбори, гра-симулятор і особистий чек-лист. Рухайтесь зверху вниз або через меню.</p></div>
     </div>
-    <div class="card glow">
-      <div class="timeline">
-        <div class="tl"><div class="t">00:00</div><div class="d"><b>Вступ і правила гри</b><span>Мета заняття, формат, домовленість про «дурних запитань не буває».</span></div></div>
-        <div class="tl"><div class="t">00:05</div><div class="d"><b>Розминка-опитування</b><span>«Хто з вас отримував “виплату від ООН” у Telegram?» — швидкий зріз досвіду групи.</span></div></div>
-        <div class="tl"><div class="t">00:08</div><div class="d"><b>Що таке фішинг + ознаки</b><span>Терміновість, «виграш», прохання даних. Психологія тиску. <span class="pill">1.2</span></span></div></div>
-        <div class="tl"><div class="t">00:18</div><div class="d"><b>Перевірка посилань</b><span>Реальна адреса, скорочені лінки, підроблені домени + інструменти. <span class="pill">1.2</span></span></div></div>
-        <div class="tl"><div class="t">00:28</div><div class="d"><b>Deepfake і фейкові акаунти</b><span>Як виглядають, чому небезпечні, базова перевірка. <span class="pill">1.2</span></span></div></div>
-        <div class="tl"><div class="t">00:36</div><div class="d"><b>Схеми проти переселенців</b><span>Реальні приклади шахрайства з «допомогою ВПО». <span class="pill">1.2</span></span></div></div>
-        <div class="tl"><div class="t">00:43</div><div class="d"><b>Практика: «фішинг чи ні»</b><span>Розбір 3–4 реальних повідомлень разом. <span class="pill">1.2</span></span></div></div>
-        <div class="tl brk"><div class="t">00:50</div><div class="d"><b>↺ Мікро-пауза (2 хв)</b><span>Розім'ятися, питання.</span></div></div>
-        <div class="tl"><div class="t">00:52</div><div class="d"><b>Що про вас видно публічно</b><span>Пошук свого імені, фото, телефону. <span class="pill">1.3</span></span></div></div>
-        <div class="tl"><div class="t">01:00</div><div class="d"><b>Приватність у соцмережах</b><span>Хто бачить пости, геолокацію, список друзів. <span class="pill">1.3</span></span></div></div>
-        <div class="tl"><div class="t">01:07</div><div class="d"><b>Геодані і фото</b><span>Метадані (EXIF), фон на фото — особливо важливо для ВПО. <span class="pill">1.3</span></span></div></div>
-        <div class="tl"><div class="t">01:14</div><div class="d"><b>Артефакт: security-checklist</b><span>Кожна заповнює та фіналізує особистий чек-лист. <span class="pill">1.3</span></span></div></div>
-        <div class="tl"><div class="t">01:22</div><div class="d"><b>🎮 Гра «Інбокс під вогнем»</b><span>Симулятор: «фішинг чи безпечно» на швидкість.</span></div></div>
-        <div class="tl"><div class="t">01:28</div><div class="d"><b>Домашнє завдання + підсумок</b><span>Що зробити до наступної зустрічі.</span></div></div>
+    <div class="grid g2">
+      <div class="card glow">
+        <h3 style="margin-top:0"><span class="pill" style="color:var(--cyan);border-color:var(--line2)">Лекція 1.2</span> Фішинг, deepfake, шкідливі посилання</h3>
+        <ol class="toc">
+          <li><a href="#l12">Що таке фішинг і його ознаки</a></li>
+          <li><a href="#links">Перевірка посилань і доменів</a></li>
+          <li><a href="#deepfake">Deepfake і фейкові акаунти</a></li>
+          <li><a href="#vpo">Схеми шахрайства проти ВПО</a></li>
+          <li><a href="#scam">Скам-індустрія: як працюють «офіси»</a></li>
+          <li><a href="#practice">Практика «фішинг чи ні»</a></li>
+        </ol>
+      </div>
+      <div class="card glow">
+        <h3 style="margin-top:0"><span class="pill" style="color:var(--cyan);border-color:var(--line2)">Лекція 1.3</span> OSINT-гігієна та самозахист</h3>
+        <ol class="toc">
+          <li><a href="#l13">Що про вас видно публічно</a></li>
+          <li><a href="#l13">Приватність, геодані і фото (EXIF)</a></li>
+          <li><a href="#osint-methods">OSINT-методи, сервіси, доксинг</a></li>
+          <li><a href="#osint-methods">Перевірка номерів і скам-дзвінки</a></li>
+          <li><a href="#video">Відеорозбори українською</a></li>
+          <li><a href="#checklist">Артефакт: security-checklist</a></li>
+          <li><a href="#game">Гра «Інбокс під вогнем»</a></li>
+          <li><a href="#homework">Домашнє завдання</a></li>
+        </ol>
       </div>
     </div>
   </div>
@@ -652,6 +711,40 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
   </div>
 </section>
 
+<!-- ============ SCAM INDUSTRY ============ -->
+<section id="scam">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🏢</div>
+      <div><span class="tag">Лекція 1.2 · Індустрія</span><h2>Скам-індустрія: як влаштовані шахрайські «офіси»</h2></div>
+    </div>
+    <p><b>Скам</b> (англ. <i>scam</i> — афера) — це шахрайство, поставлене <b>на потік</b>. За «випадковим» дзвінком чи «менеджером інвестплатформи» часто стоїть не одинак, а <b>кол-центр-офіс</b> із десятками операторів, скриптами й планами продажів. Це важливо розуміти: вас обробляє натренований професіонал, а не аматор.</p>
+
+    <div class="grid g2">
+      <div class="card"><span class="ic">🏢</span><h4>Що таке скам-офіс</h4><p style="margin:0;color:var(--muted)">Орендоване приміщення з «операторами» на змінах. Є відділи: «прозвон» холодних баз, «утримання/конвертація» (хто дотискає жертву), «виплати». Усе як у звичайній компанії — лише продукт злочинний.</p></div>
+      <div class="card"><span class="ic">📑</span><h4>Скрипти і CRM</h4><p style="margin:0;color:var(--muted)">Оператори працюють за готовими сценаріями розмови та CRM-системою з «лідами» — базами потенційних жертв (часто зі зливів даних). За результат — відсоток і KPI.</p></div>
+      <div class="card"><span class="ic">🎣</span><h4>Типові «продукти»</h4><p style="margin:0;color:var(--muted)">Фейкові «інвестиційні/брокерські платформи» та крипта, «ваша картка заблокована», «безпечний рахунок» від імені банку, виграші й компенсації.</p></div>
+      <div class="card"><span class="ic">🧲</span><h4>Як дотискають</h4><p style="margin:0;color:var(--muted)">«Персональний менеджер», гарні графіки прибутку, дозований успіх (дають вивести трохи — щоб повірили), а потім «доплатіть податок/комісію, щоб забрати гроші».</p></div>
+    </div>
+
+    <div class="callout danger">
+      <span class="ci">🇺🇦</span>
+      <div><b>Як це працює в Україні.</b> Кіберполіція та СБУ регулярно ліквідовують такі офіси — лише за одну добу 2025-го прикрили <b>понад 100</b> кол-центрів. Вони ошукують і українців (зокрема військових), і іноземців; обороти окремих мереж сягають <b>мільярдів гривень</b>, а збитки від одного офісу — десятків мільйонів. Це не «дрібні шахраї», а організована індустрія.</div>
+    </div>
+
+    <div class="callout warn">
+      <span class="ci">🖥️</span>
+      <div><b>Червоні прапори дзвінка зі скам-офісу.</b> Просять встановити <b>AnyDesk / TeamViewer / «програму підтримки»</b> (віддалений доступ до телефона), перевести гроші на «безпечний рахунок», назвати код із SMS чи CVV, діяти «терміново й нікому не казати». У всіх випадках — <b>покладіть слухавку</b> і передзвоніть у банк за номером із картки.</div>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">⚠️</span>
+      <div><b>Важливо для молоді й рідних.</b> Вакансія «оператор кол-центру» з підозріло високою ЗП і «продажем інвестицій клієнтам із ЄС» — часто це і є скам-офіс. Участь у схемі — <b>кримінал</b>, навіть якщо ви «лише дзвонили за скриптом». Перевіряйте роботодавця.</div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ 1.3 OSINT ============ -->
 <section id="l13">
   <span class="anchor"></span>
@@ -728,6 +821,164 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
   </div>
 </section>
 
+<!-- ============ OSINT METHODS ============ -->
+<section id="osint-methods">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🧠</div>
+      <div><span class="tag">Лекція 1.3 · Поглиблено</span><h2>OSINT-методи, сервіси та самозахист</h2></div>
+    </div>
+    <p>Детальніше: <b>якими методами</b> людину знаходять у відкритих джерелах, якими <b>легальними сервісами</b> перевірити саму себе — і як прибрати зайве. Принцип той самий: подивіться на себе очима того, хто вас шукає.</p>
+
+    <div class="callout warn">
+      <span class="ci">⚖️</span>
+      <div><b>Етика і закон.</b> Усе нижче — для <b>самоперевірки</b> та розуміння загроз. Збір даних про інших без підстав, «пробив» і доксинг — це порушення приватності й часто кримінал. Використовуйте ці знання, щоб захистити себе й близьких, а не стежити за іншими.</div>
+    </div>
+
+    <h3>🔧 Базові OSINT-методи (застосуйте до себе)</h3>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="card"><span class="ic">🔤</span><h4>Пошук за нікнеймом</h4><p style="margin:0;color:var(--muted)">Один і той самий нік на різних сайтах зв'язує ваші акаунти. Перевірте, де «світиться» ваш нік.</p></div>
+      <div class="card"><span class="ic">✉️</span><h4>За email / телефоном</h4><p style="margin:0;color:var(--muted)">За адресою пошти чи номером знаходять прив'язані акаунти та витоки. Перевірте свої.</p></div>
+      <div class="card"><span class="ic">🔍</span><h4>Google-дорки</h4><p style="margin:0;color:var(--muted)">Точні запити: <span class="mono">"Ім'я Прізвище" site:facebook.com</span>, <span class="mono">filetype:pdf ваше ім'я</span> — щоб знайти забуті сліди.</p></div>
+      <div class="card"><span class="ic">🖼️</span><h4>Зворотний пошук обличчя</h4><p style="margin:0;color:var(--muted)">Ваше фото шукають за обличчям. Перевірте, де воно з'являється і де ним можуть скористатися.</p></div>
+      <div class="card"><span class="ic">📍</span><h4>Геолокація за фото</h4><p style="margin:0;color:var(--muted)">За фоном, вивісками, тінями визначають місце і час кадру (GEOINT). Перевіряйте, що видно на ваших фото.</p></div>
+      <div class="card"><span class="ic">🕸️</span><h4>Зв'язки і коло</h4><p style="margin:0;color:var(--muted)">Список друзів, лайки, спільні фото малюють вашу мережу. Закрийте друзів і підписки.</p></div>
+    </div>
+
+    <h3 style="margin-top:26px">🧰 Легальні сервіси самоперевірки (активні лінки)</h3>
+    <div class="tools">
+      <div class="tool"><div class="tic">✉️</div><div><div class="tname"><a href="https://epieos.com/" target="_blank" rel="noopener">Epieos</a></div><div class="tdesc">За email чи номером показує, де він зареєстрований (Google-акаунт, сервіси). Перевірте себе.</div><div class="turl">epieos.com</div></div></div>
+      <div class="tool"><div class="tic">🧩</div><div><div class="tname"><a href="https://github.com/megadose/holehe" target="_blank" rel="noopener">Holehe</a></div><div class="tdesc">Перевіряє, на яких 120+ сайтах зареєстрована ваша пошта. Допомагає закрити зайве.</div><div class="turl">github.com/megadose/holehe</div></div></div>
+      <div class="tool"><div class="tic">🔤</div><div><div class="tname"><a href="https://whatsmyname.app/" target="_blank" rel="noopener">WhatsMyName</a> / <a href="https://github.com/sherlock-project/sherlock" target="_blank" rel="noopener">Sherlock</a></div><div class="tdesc">Шукають ваш нік на сотнях платформ — знаходять забуті акаунти.</div><div class="turl">whatsmyname.app · sherlock-project</div></div></div>
+      <div class="tool"><div class="tic">🔓</div><div><div class="tname"><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Have I Been Pwned</a></div><div class="tdesc">Чи у витоках ваші пошта/телефон. Якщо так — змініть паролі.</div><div class="turl">haveibeenpwned.com</div></div></div>
+      <div class="tool"><div class="tic">🗺️</div><div><div class="tname"><a href="https://osintframework.com/" target="_blank" rel="noopener">OSINT Framework</a></div><div class="tdesc">Велика мапа OSINT-інструментів за категоріями — для тих, хто хоче глибше.</div><div class="turl">osintframework.com</div></div></div>
+      <div class="tool"><div class="tic">🌍</div><div><div class="tname"><a href="https://myactivity.google.com/" target="_blank" rel="noopener">Google: Результати про вас</a></div><div class="tdesc">Запит на видалення вашого телефону/адреси з пошуку Google.</div><div class="turl">google → «Results about you»</div></div></div>
+    </div>
+
+    <h3 style="margin-top:26px">🎯 Доксинг: що це, хто такі доксери і як вони заробляють</h3>
+    <p><b>Доксинг</b> (від англ. <i>dox</i> — documents) — це <b>збір і публікація приватних даних людини</b> (адреса, телефон, місце роботи, родина, маршрути) без згоди, щоб залякати, нашкодити чи цькувати. Для активісток, військових, волонтерок і ВПО це пряма загроза фізичній безпеці.</p>
+    <div class="grid g2">
+      <div class="card"><span class="ic">⚙️</span><h4>Як це працює</h4>
+        <ul class="clean">
+          <li>Збирають крихти з відкритих джерел: соцмережі, оголошення, фото.</li>
+          <li>Додають дані з витоків і «пробив»-сервісів (номер → ПІБ, адреса).</li>
+          <li>Соцінженерія: випитують деталі у вас або у знайомих.</li>
+          <li>Складають досьє — і публікують або погрожують оприлюднити.</li>
+        </ul>
+      </div>
+      <div class="card"><span class="ic">🕵️</span><h4>Хто такі доксери</h4>
+        <ul class="clean">
+          <li>Тролі, сталкери, колишні — на ґрунті помсти чи контролю.</li>
+          <li>Ідеологічні групи та «замовний» харасмент.</li>
+          <li>Шахраї, що готують атаку під конкретну людину.</li>
+          <li>Ворожі ІПСО — проти військових, волонтерів, активісток.</li>
+        </ul>
+      </div>
+      <div class="card"><span class="ic">💰</span><h4>Як вони заробляють</h4>
+        <ul class="clean">
+          <li>Продаж зібраних баз і «пробив» на замовлення.</li>
+          <li>Шантаж і вимагання: «заплати — не опублікуємо».</li>
+          <li>Оплата за замовлене цькування чи злив.</li>
+          <li>Хайп, реклама й донати на «розслідуваннях».</li>
+        </ul>
+      </div>
+      <div class="card"><span class="ic">🛡️</span><h4>Як захиститися</h4>
+        <ul class="clean check">
+          <li>Мінімізуйте слід: приватні профілі, окремі номер і пошта.</li>
+          <li>Не публікуйте адресу, локацію, фото документів.</li>
+          <li>Перевірте витоки (HIBP) і видаліть дані з Google-пошуку.</li>
+          <li>Якщо здоксили — фіксуйте докази, скаржтесь у платформу й кіберполіцію.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout danger">
+      <span class="ci">🕳️</span>
+      <div><b>Головний інструмент доксерів — «пробив»-боти та брокери даних.</b> У Telegram існують боти (як сумнозвісний «Глаз Бога»), що за номером чи ПІБ видають дані з витоків. <b>Це нелегально й небезпечно.</b> Ми свідомо <u>не</u> даємо на них посилань — але ви маєте знати, що вони є, бо саме так збирають досьє. Найкращий захист — щоб відкритих даних про вас було якомога менше.</div>
+    </div>
+
+    <h3 style="margin-top:26px">📞 Перевірка номерів і захист від скам-дзвінків</h3>
+    <p>Незнайомий номер дзвонить або пише? Його можна перевірити — і відсікти шахрайські дзвінки. Але деякі «визначники» самі є ризиком для приватності.</p>
+    <div class="callout warn">
+      <span class="ci">📵</span>
+      <div><b>GetContact, Truecaller та подібні визначники.</b> Так, вони показують, як підписаний номер, і блокують спам. <b>Але</b> щоб працювати, вони <b>завантажують вашу телефонну книгу</b> на свої сервери — і так само хтось бачить, як підписані <b>ви</b> (іноді з ПІБ чи місцем роботи). Тобто це одночасно і захист, і витік. Якщо користуєтесь — заборонІть доступ до контактів і перевірте/видаліть свій профіль на <a href="https://getcontact.com/manage" target="_blank" rel="noopener">getcontact.com/manage</a>.</div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h4>✅ Як безпечно перевірити номер</h4>
+        <ul class="clean">
+          <li>Вставте номер у пошук Google і подивіться фото/ім'я профілю в месенджері.</li>
+          <li>Перевірте, чи є номер на офіційному сайті організації, від імені якої дзвонять.</li>
+          <li>Не передзвонюйте на незнайомі міжнародні чи преміум-номери — це може коштувати грошей.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🚫 Як блокувати скам-дзвінки</h4>
+        <ul class="clean">
+          <li><b>iPhone:</b> Налаштування → Телефон → «Заглушати невідомих абонентів».</li>
+          <li><b>Android:</b> Телефон → Налаштування → Блокування/Антиспам, «Фільтрувати спам».</li>
+          <li>Увімкніть антиспам/визначник у застосунку оператора (Київстар, Vodafone, lifecell).</li>
+          <li>Заблокуйте і поскаржтесь на номер; не натискайте кнопок у тоновому меню робота.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top:26px">🧱 Чого ще варто стерегтися (коротко)</h3>
+    <div class="grid g3">
+      <div class="card"><span class="ic">🔳</span><h4>QR-фішинг (quishing)</h4><p style="margin:0;color:var(--muted)">QR-код на «оголошенні», «штрафі» чи в листі веде на фейковий сайт. Не скануйте QR із невідомих джерел; перевіряйте адресу перед уведенням даних.</p></div>
+      <div class="card"><span class="ic">📲</span><h4>Підміна SIM (SIM-swap)</h4><p style="margin:0;color:var(--muted)">Шахрай перевипускає вашу SIM і перехоплює коди з SMS. Тому 2FA — через додаток, а не SMS; поставте у оператора заборону дій без особистої присутності.</p></div>
+      <div class="card"><span class="ic">📶</span><h4>Публічний Wi-Fi</h4><p style="margin:0;color:var(--muted)">У відкритих мережах не заходьте в банк/пошту без VPN. Вимкніть авто-підключення до незнайомих мереж.</p></div>
+      <div class="card"><span class="ic">💾</span><h4>Резервні копії</h4><p style="margin:0;color:var(--muted)">Регулярний (бажано зашифрований) бекап фото й документів рятує від втрати пристрою та програм-вимагачів.</p></div>
+      <div class="card"><span class="ic">🔐</span><h4>Шифрування пристрою</h4><p style="margin:0;color:var(--muted)">Увімкніть код/біометрію і шифрування. Загублений незахищений телефон = доступ до всього.</p></div>
+      <div class="card"><span class="ic">🧩</span><h4>Розширення й оновлення</h4><p style="margin:0;color:var(--muted)">Видаліть зайві розширення браузера (вони бачать усе), вчасно оновлюйте застосунки — латки закривають діри.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIDEO ============ -->
+<section id="video">
+  <span class="anchor"></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">🎬</div>
+      <div><span class="tag">Відеорозбори · українською</span><h2>Подивитися: OSINT і цифрова безпека</h2></div>
+    </div>
+    <p>Відео та курси українською — щоб закріпити тему й побачити методи в дії. Відкривайте після заняття або вдома.</p>
+    <div class="video-grid">
+      <a class="vid" href="https://www.youtube.com/channel/UCsHKtqmsVxYOtb4VUE0Ap8w" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">▶</span> Molfar — канал української OSINT-агенції</div>
+        <div class="vd">Розбори реальних розслідувань: як за фото й відкритих даних встановлюють локацію та особу. Найкраще, щоб відчути логіку OSINT.</div>
+        <div class="vch">YouTube · Molfar</div>
+      </a>
+      <a class="vid" href="https://www.youtube.com/watch?v=9oTJrpcM7Zk" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">▶</span> GEOINT за скриншотом: як фон видає адресу</div>
+        <div class="vd">Наочний приклад, як дрібниця на фото розкриває місцезнаходження. Чудово показує, чого НЕ можна публікувати.</div>
+        <div class="vch">YouTube · Molfar</div>
+      </a>
+      <a class="vid" href="https://www.youtube.com/watch?v=Kbfp3QEFGKY" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">▶</span> OSINT-розвідка і як захистити чутливе</div>
+        <div class="vd">Про те, як зловмисники збирають дані з відкритих джерел — і як цьому протидіяти.</div>
+        <div class="vch">YouTube · Molfar</div>
+      </a>
+      <a class="vid" href="https://babel.ua/podcasts/100563-osint-rozsliduvannya-shcho-dopomagayut-vikrivati-voyenni-zlochini-yak-ce-pracyuye-cifrova-bezpeka-5-pavlo-fiyalkovskiy-z-agenciji-molfar" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">🎙️</span> «Цифрова безпека #5»: як працює OSINT</div>
+        <div class="vd">Розмова з дослідником Molfar про OSINT простою мовою — щоб зрозуміти тему без технічних деталей.</div>
+        <div class="vch">Babel · подкаст</div>
+      </a>
+      <a class="vid" href="https://prometheus.org.ua/prometheus-free/osint-open-source-intelligence/" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">🎓</span> Безкоштовний курс «OSINT» (Prometheus)</div>
+        <div class="vd">Системний відеокурс із розвідки за відкритими джерелами та інформаційної безпеки. Українською, безкоштовно.</div>
+        <div class="vch">Prometheus · курс</div>
+      </a>
+      <a class="vid" href="https://robotdreams.cc/uk/course/2380-osint-doslidzhennya-vidkritih-dzherel" target="_blank" rel="noopener">
+        <div class="vt"><span class="vp">🎓</span> Курс «OSINT: дослідження відкритих джерел»</div>
+        <div class="vd">Поглиблений курс для тих, хто хоче опанувати методи професійно (платний).</div>
+        <div class="vch">robot_dreams · курс</div>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ CHECKLIST (ARTEFACT) ============ -->
 <section id="checklist">
   <span class="anchor"></span>
@@ -774,6 +1025,13 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
         <div class="cl-item"><input type="checkbox" id="c13"><label for="c13"><span class="ci-t">Сховала номер телефону</span><span class="ci-d">Telegram: «Хто бачить мій номер» → Ніхто; додала username для контактів.</span></label></div>
         <div class="cl-item"><input type="checkbox" id="c14"><label for="c14"><span class="ci-t">Перевірила активні сесії й пристрої</span><span class="ci-d">Завершила незнайомі сесії в пошті, соцмережах і месенджерах.</span></label></div>
         <div class="cl-item"><input type="checkbox" id="c15"><label for="c15"><span class="ci-t">Домовилась про «кодове слово» з рідними</span><span class="ci-d">Захист від дзвінків із клонованим голосом про «термінову біду».</span></label></div>
+      </div>
+
+      <div class="cl-group">
+        <div class="gh"><span class="gi">📞</span> Телефон і дзвінки</div>
+        <div class="cl-item"><input type="checkbox" id="c16"><label for="c16"><span class="ci-t">Увімкнула блокування спам-дзвінків</span><span class="ci-d">iPhone: «Заглушати невідомих абонентів»; Android: антиспам/фільтр; або визначник оператора (Київстар, Vodafone, lifecell).</span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c17"><label for="c17"><span class="ci-t">Перевірила приватність у визначниках номера</span><span class="ci-d">Якщо є GetContact/Truecaller — заборонила доступ до контактів і видалила свій профіль/теги: <a href="https://getcontact.com/manage" target="_blank" rel="noopener">getcontact.com/manage</a></span></label></div>
+        <div class="cl-item"><input type="checkbox" id="c18"><label for="c18"><span class="ci-t">Завела окремий номер/пошту для оголошень</span><span class="ci-d">Щоб основний номер не «світився» в OLX, доставці та реєстраціях — менше шансів на «пробив» і доксинг.</span></label></div>
       </div>
 
       <div class="cl-actions no-print">
@@ -851,7 +1109,7 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
     </div>
     <div class="callout info">
       <span class="ci">📤</span>
-      <div><b>Як здати.</b> Надішліть короткий звіт (скрін + опис ознак + ваші 3 виконані пункти) кураторці групи у форматі, домовленому в чаті школи. Це найважливіша частина — теорія працює лише тоді, коли ви її застосували.</div>
+      <div><b>Як здати.</b> Надішліть короткий звіт (скрін + опис ознак + ваші 3 виконані пункти) лектору Олексію Мацуці (контакти — у блоці «Лектор» вгорі) або в чат школи у зручному форматі. Це найважливіша частина — теорія працює лише тоді, коли ви її застосували.</div>
     </div>
   </div>
 </section>
@@ -875,6 +1133,7 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
           <li><a href="https://prometheus.org.ua/" target="_blank" rel="noopener">Prometheus — «Інформаційна безпека»</a> <span class="d">· безкоштовний онлайн-курс</span></li>
           <li><a href="https://hackyourmom.com/" target="_blank" rel="noopener">HackYourMom</a> <span class="d">· кіберграмотність простою мовою</span></li>
           <li><a href="https://cybereducation.org/" target="_blank" rel="noopener">CyberEducation</a> <span class="d">· базові правила безпеки в цифрі</span></li>
+          <li><a href="https://www.youtube.com/channel/UCsHKtqmsVxYOtb4VUE0Ap8w" target="_blank" rel="noopener">Molfar (YouTube)</a> <span class="d">· OSINT-розбори українською агенцією</span></li>
         </ul>
       </div>
       <div class="res">
@@ -883,6 +1142,7 @@ footer .fl{display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-c
           <li><a href="https://www.stopfake.org/uk/golovna/" target="_blank" rel="noopener">StopFake</a> <span class="d">· викриття дезінформації</span></li>
           <li><a href="https://voxukraine.org/voxcheck" target="_blank" rel="noopener">VoxCheck</a> <span class="d">· фактчекінг від VoxUkraine</span></li>
           <li><a href="https://without-lie.info/" target="_blank" rel="noopener">«Без брехні»</a> <span class="d">· розбір фейків і шахрайства</span></li>
+          <li><a href="https://detector.media/" target="_blank" rel="noopener">Детектор медіа</a> <span class="d">· цифрова безпека, розбори шахрайства в месенджерах</span></li>
           <li><a href="https://www.bank.gov.ua/ua/about/fraud-protection" target="_blank" rel="noopener">НБУ #ШахрайГудбай</a> <span class="d">· фінансова безпека</span></li>
         </ul>
       </div>
